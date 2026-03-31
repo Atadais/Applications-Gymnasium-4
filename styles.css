@@ -17,14 +17,15 @@ body {
     min-height: 100vh;
 }
 
+/* ========== ШАПКА ПО ЦЕНТРУ ========== */
 header {
     background: #2A5C9E;
     color: white;
     padding: 15px 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: column;
     gap: 15px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     position: sticky;
@@ -45,12 +46,14 @@ header {
 
 .desktop-nav {
     display: flex;
-    gap: 20px;
+    gap: 30px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .mobile-nav {
     display: none;
+    width: 100%;
 }
 
 .menu-toggle {
@@ -91,6 +94,7 @@ header {
     font-weight: 500;
     border-radius: 8px;
     transition: all 0.2s ease;
+    text-align: center;
 }
 
 .mobile-menu a:hover {
@@ -400,6 +404,7 @@ tr:hover td {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .filter-btn {
@@ -504,24 +509,28 @@ tr:hover td {
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .teacher-info {
     background: linear-gradient(135deg, #E8F4FD, #D4E9FA);
     color: #2A5C9E;
     border-left: 4px solid #2A5C9E;
+    text-align: left;
 }
 
 .user-info {
     background: linear-gradient(135deg, #FFF3E0, #FFE8CC);
     color: #F9A826;
     border-left: 4px solid #F9A826;
+    text-align: left;
 }
 
 .admin-info {
     background: linear-gradient(135deg, #E8F4FD, #D4E9FA);
     color: #2A5C9E;
     border-left: 4px solid #2A5C9E;
+    text-align: left;
 }
 
 .new-request-btn {
@@ -703,10 +712,11 @@ footer::before {
     opacity: 0.7;
 }
 
+/* ========== МОБИЛЬНЫЕ НАСТРОЙКИ ========== */
 @media (max-width: 767px) {
     header {
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
         padding: 12px;
     }
     
@@ -720,6 +730,7 @@ footer::before {
     
     .mobile-nav {
         display: block;
+        width: 100%;
     }
     
     .menu-toggle {
@@ -730,10 +741,18 @@ footer::before {
     
     h1 {
         font-size: 1.6rem;
+        display: block;
+        text-align: center;
+    }
+    
+    h1::after {
+        left: 50%;
+        transform: translateX(-50%);
     }
     
     h2 {
         font-size: 1.3rem;
+        text-align: center;
     }
     
     .filters {
@@ -753,8 +772,13 @@ footer::before {
     button {
         -webkit-tap-highlight-color: transparent;
     }
+    
+    .info-box {
+        text-align: center;
+    }
 }
 
+/* ========== ДЕСКТОПНЫЕ НАСТРОЙКИ ========== */
 @media (min-width: 1200px) {
     main {
         padding: 0 20px;
@@ -770,5 +794,9 @@ footer::before {
     
     th, td {
         padding: 14px;
+    }
+    
+    .desktop-nav {
+        gap: 40px;
     }
 }

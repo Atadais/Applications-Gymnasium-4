@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новая заявка - Гимназия №4</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="logo/logo.png" alt="Логотип" class="logo">
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="about.html">О нас</a>
+            <a href="my_requests.html">Заявки</a>
+            <a href="register.html">Регистрация</a>
+            <a href="#" id="logout-link">Выйти</a>
+        </nav>
+    </header>
+    <main>
+        <div class="form-container">
+            <h2>Создать новую заявку</h2>
+            <div id="access-error" class="error-box hidden">
+                <p>⚠️ Только учителя могут создавать заявки!</p>
+                <p>Если вы учитель, обратитесь к администратору для назначения прав.</p>
+            </div>
+            <div id="error" class="error-text"></div>
+            
+            <input type="text" id="title" placeholder="Название заявки">
+            
+            <select id="category">
+                <option value="">Выберите категорию</option>
+            </select>
+            
+            <textarea id="description" placeholder="Описание проблемы" rows="5"></textarea>
+            
+            <button id="submit-btn">Отправить заявку</button>
+            <p><a href="my_requests.html">← Назад к моим заявкам</a></p>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Контакты</h3>
+                <p>📧 bog.men98@gmail.com</p>
+                <p>📞 +7 928 714 97 23</p>
+                <p>📍 Нальчик, ул. Кулиева, д. 20</p>
+            </div>
+            <div class="footer-section">
+                <h3>О проекте</h3>
+                <p>Система заявок</p>
+                <p>Дипломный проект</p>
+                <p>© 2026 Гимназия №4</p>
+            </div>
+            <div class="footer-section">
+                <h3>Навигация</h3>
+                <p><a href="index.html">Главная</a></p>
+                <p><a href="about.html">О нас</a></p>
+                <p><a href="my_requests.html">Заявки</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

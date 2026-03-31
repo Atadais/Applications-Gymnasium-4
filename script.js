@@ -16,25 +16,68 @@ function saveAll() {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 }
 
+// ========== МОБИЛЬНАЯ НАВИГАЦИЯ ==========
+function initMobileMenu() {
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            mobileMenu.classList.toggle('open');
+        });
+        
+        // Закрытие меню при клике на ссылку
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.remove('open');
+            });
+        });
+    }
+}
+
 // ========== ФУНКЦИЯ ДЛЯ ДИНАМИЧЕСКОЙ НАВИГАЦИИ ==========
 function updateNavigation() {
-    const nav = document.getElementById('main-nav');
-    if (!nav) return;
+    const desktopNav = document.getElementById('desktop-nav');
+    const mobileMenu = document.getElementById('mobile-menu');
     
-    let html = `
+    if (!desktopNav) return;
+    
+    let navHtml = `
         <a href="index.html">Главная</a>
         <a href="about.html">О нас</a>
         <a href="my_requests.html">Заявки</a>
         <a href="register.html">Регистрация</a>
     `;
     
+    let mobileHtml = `
+        <a href="index.html">🏠 Главная</a>
+        <a href="about.html">ℹ️ О нас</a>
+        <a href="my_requests.html">📋 Заявки</a>
+        <a href="register.html">📝 Регистрация</a>
+    `;
+    
     if (currentUser) {
-        html += `<a href="#" id="logout-link">Выйти</a>`;
+        navHtml += `<a href="#" id="logout-link">Выйти</a>`;
+        mobileHtml += `<a href="#" id="logout-link-mobile">🚪 Выйти</a>`;
     } else {
-        html += `<a href="login.html">Войти</a>`;
+        navHtml += `<a href="login.html">Войти</a>`;
+        mobileHtml += `<a href="login.html">🔑 Войти</a>`;
     }
     
-    nav.innerHTML = html;
+    desktopNav.innerHTML = navHtml;
+    
+    if (mobileMenu) {
+        mobileMenu.innerHTML = mobileHtml;
+        
+        const mobileLogout = document.getElementById('logout-link-mobile');
+        if (mobileLogout) {
+            mobileLogout.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }
+    }
     
     const logoutLink = document.getElementById('logout-link');
     if (logoutLink) {
@@ -173,23 +216,13 @@ function loadNews() {
 
 // ========== ИНИЦИАЛИЗАЦИЯ СТРАНИЦ ==========
 document.addEventListener('DOMContentLoaded', function() {
-    let path = window.location.pathname;
+    initMobileMenu();
+    updateNavigation();
     
-    // Обновляем навигацию для my_requests.html
-    if (path.includes('my_requests.html')) {
-        updateNavigation();
-    }
+    let path = window.location.pathname;
     
     if (path.includes('index.html') || path === '/' || path.endsWith('/')) {
         loadNews();
-    }
-    
-    let logoutLink = document.getElementById('logout-link');
-    if (logoutLink && !path.includes('my_requests.html')) {
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            logout();
-        });
     }
     
     if (path.includes('login.html')) {
@@ -248,7 +281,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let categorySelect = document.getElementById('category');
         if (categorySelect) {
-            // Очищаем select и добавляем категории
             categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
             categories.forEach(c => {
                 let option = document.createElement('option');

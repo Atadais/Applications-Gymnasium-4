@@ -16,75 +16,66 @@ function saveAll() {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 }
 
-// ========== МОБИЛЬНАЯ НАВИГАЦИЯ ==========
-function initMobileMenu() {
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    
-    if (menuToggle && mobileMenu) {
-        menuToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            mobileMenu.classList.toggle('open');
-        });
-        
-        // Закрытие меню при клике на ссылку
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function() {
-                mobileMenu.classList.remove('open');
-            });
-        });
-    }
-}
-
 // ========== ФУНКЦИЯ ДЛЯ ДИНАМИЧЕСКОЙ НАВИГАЦИИ ==========
 function updateNavigation() {
-    const desktopNav = document.getElementById('desktop-nav');
-    const mobileMenu = document.getElementById('mobile-menu');
-    
-    if (!desktopNav) return;
-    
-    let navHtml = `
-        <a href="index.html">Главная</a>
-        <a href="about.html">О нас</a>
-        <a href="my_requests.html">Заявки</a>
-        <a href="register.html">Регистрация</a>
-    `;
-    
-    let mobileHtml = `
-        <a href="index.html">🏠 Главная</a>
-        <a href="about.html">ℹ️ О нас</a>
-        <a href="my_requests.html">📋 Заявки</a>
-        <a href="register.html">📝 Регистрация</a>
-    `;
-    
-    if (currentUser) {
-        navHtml += `<a href="#" id="logout-link">Выйти</a>`;
-        mobileHtml += `<a href="#" id="logout-link-mobile">🚪 Выйти</a>`;
-    } else {
-        navHtml += `<a href="login.html">Войти</a>`;
-        mobileHtml += `<a href="login.html">🔑 Войти</a>`;
-    }
-    
-    desktopNav.innerHTML = navHtml;
-    
-    if (mobileMenu) {
-        mobileMenu.innerHTML = mobileHtml;
+    const nav = document.getElementById('main-nav');
+    if (nav) {
+        let html = `
+            <a href="index.html">Главная</a>
+            <a href="about.html">О нас</a>
+            <a href="my_requests.html">Заявки</a>
+            <a href="register.html">Регистрация</a>
+        `;
         
-        const mobileLogout = document.getElementById('logout-link-mobile');
-        if (mobileLogout) {
-            mobileLogout.addEventListener('click', function(e) {
+        if (currentUser) {
+            html += `<a href="#" id="logout-link">Выйти</a>`;
+        } else {
+            html += `<a href="login.html">Войти</a>`;
+        }
+        
+        nav.innerHTML = html;
+        
+        const logoutLink = document.getElementById('logout-link');
+        if (logoutLink) {
+            logoutLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 logout();
             });
         }
     }
     
-    const logoutLink = document.getElementById('logout-link');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            logout();
-        });
+    // ========== ОБНОВЛЕНИЕ МОБИЛЬНОГО МЕНЮ ==========
+    const mobileLogout = document.getElementById('mobile-logout');
+    if (mobileLogout) {
+        if (currentUser) {
+            mobileLogout.classList.remove('hidden');
+            mobileLogout.onclick = (e) => {
+                e.preventDefault();
+                logout();
+            };
+        } else {
+            mobileLogout.classList.add('hidden');
+        }
+    }
+    
+    // Также обновляем ссылку входа в мобильном меню
+    const mobileLoginLink = document.querySelector('.mobile-nav a[href="login.html"]');
+    if (mobileLoginLink) {
+        if (currentUser) {
+            mobileLoginLink.classList.add('hidden');
+        } else {
+            mobileLoginLink.classList.remove('hidden');
+        }
+    }
+    
+    // Обновляем ссылку на админку в мобильном меню
+    const mobileAdminLink = document.querySelector('.mobile-nav a[href="admin.html"]');
+    if (mobileAdminLink) {
+        if (currentUser && currentUser.role === 'admin') {
+            mobileAdminLink.classList.remove('hidden');
+        } else {
+            mobileAdminLink.classList.add('hidden');
+        }
     }
 }
 
@@ -107,6 +98,7 @@ function loginUser(login, password) {
     if (user) { 
         currentUser = user; 
         saveAll(); 
+        updateNavigation();
         return true; 
     }
     return false;
@@ -116,6 +108,7 @@ function loginUser(login, password) {
 function logout() { 
     currentUser = null; 
     saveAll(); 
+    updateNavigation();
     location.href = 'index.html'; 
 }
 
@@ -214,15 +207,60 @@ function loadNews() {
     if (counterSpan) counterSpan.textContent = counter;
 }
 
+// ========== БУРГЕР-МЕНЮ ==========
+function initBurgerMenu() {
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    const overlay = document.getElementById('overlay');
+    
+    if (!burgerBtn || !mobileNav || !overlay) return;
+    
+    function closeMenu() {
+        mobileNav.classList.remove('open');
+        overlay.classList.remove('active');
+    }
+    
+    function openMenu() {
+        mobileNav.classList.add('open');
+        overlay.classList.add('active');
+    }
+    
+    burgerBtn.addEventListener('click', () => {
+        if (mobileNav.classList.contains('open')) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    });
+    
+    overlay.addEventListener('click', closeMenu);
+    
+    // Закрываем меню при клике на ссылку
+    mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', closeMenu);
+    });
+}
+
 // ========== ИНИЦИАЛИЗАЦИЯ СТРАНИЦ ==========
 document.addEventListener('DOMContentLoaded', function() {
-    initMobileMenu();
-    updateNavigation();
-    
     let path = window.location.pathname;
+    
+    // Инициализация бургер-меню
+    initBurgerMenu();
+    
+    // Обновляем навигацию для всех страниц
+    updateNavigation();
     
     if (path.includes('index.html') || path === '/' || path.endsWith('/')) {
         loadNews();
+    }
+    
+    let logoutLink = document.getElementById('logout-link');
+    if (logoutLink && !path.includes('my_requests.html')) {
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
     }
     
     if (path.includes('login.html')) {

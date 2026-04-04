@@ -7,21 +7,65 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- ОРИГИНАЛЬНАЯ ШАПКА ГИМНАЗИИ №4 -->
     <header>
         <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav>
+        <nav class="main-nav">
             <a href="index.html">Главная</a>
             <a href="about.html">О нас</a>
             <a href="my_requests.html">Заявки</a>
             <a href="register.html">Регистрация</a>
         </nav>
+        <button class="burger-btn" id="burgerBtn">
+            <span></span><span></span><span></span>
+        </button>
     </header>
+    
     <main>
         <h1>Гимназия №4 г. Нальчик</h1>
+        
         <h2>Последние новости</h2>
-        <div class="news-grid" id="news-container"></div>
+        <div class="news-grid">
+            <div class="news-card">
+                <img src="news/news1.jpg" class="news-image" alt="Зимние каникулы" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
+                <div class="news-content">
+                    <div class="news-date">📅 01.01.2026</div>
+                    <h3>Зимние каникулы</h3>
+                    <p>Каникулы с 29.12 по 12.01</p>
+                </div>
+            </div>
+            
+            <div class="news-card">
+                <img src="news/news2.jpg" class="news-image" alt="Родительское собрание" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
+                <div class="news-content">
+                    <div class="news-date">📅 02.01.2026</div>
+                    <h3>Родительское собрание</h3>
+                    <p>15.01 в 18:00</p>
+                </div>
+            </div>
+            
+            <div class="news-card">
+                <img src="news/news3.jpg" class="news-image" alt="Олимпиада по математике" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
+                <div class="news-content">
+                    <div class="news-date">📅 03.01.2026</div>
+                    <h3>Олимпиада по математике</h3>
+                    <p>Школьный этап 20.01</p>
+                </div>
+            </div>
+            
+            <div class="news-card">
+                <img src="news/news4.jpg" class="news-image" alt="Ремонт в столовой" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
+                <div class="news-content">
+                    <div class="news-date">📅 04.01.2026</div>
+                    <h3>Ремонт в столовой</h3>
+                    <p>Завершен ремонт</p>
+                </div>
+            </div>
+        </div>
+        
         <div class="counter">Посетителей сегодня: <span id="counter"></span></div>
     </main>
+    
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -47,6 +91,16 @@
             <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
         </div>
     </footer>
+    
+    <!-- Мобильное меню (без кнопки "Войти") -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html">Главная</a>
+        <a href="about.html">О нас</a>
+        <a href="my_requests.html">Заявки</a>
+        <a href="register.html">Регистрация</a>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    
     <script src="script.js"></script>
 </body>
 </html>

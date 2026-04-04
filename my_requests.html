@@ -9,13 +9,16 @@
 <body>
     <header>
         <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav>
+        <nav class="main-nav">
             <a href="index.html">Главная</a>
             <a href="about.html">О нас</a>
             <a href="my_requests.html">Заявки</a>
             <a href="register.html">Регистрация</a>
             <a href="#" id="logout-link" class="hidden">Выйти</a>
         </nav>
+        <button class="burger-btn" id="burgerBtn">
+            <span></span><span></span><span></span>
+        </button>
     </header>
     <main>
         <h1>Мои заявки</h1>
@@ -42,18 +45,18 @@
             <button class="filter-btn" data-filter="Отклонена">Отклоненные</button>
         </div>
         
-         <table>
+        <table>
             <thead>
-                 <tr>
+                <tr>
                     <th>Дата</th>
                     <th>Название</th>
                     <th>Категория</th>
                     <th>Статус</th>
                     <th>Действие</th>
-                 </tr>
+                </tr>
             </thead>
             <tbody id="requests-table"></tbody>
-         </table>
+        </table>
     </main>
     <footer>
         <div class="footer-content">
@@ -80,6 +83,13 @@
             <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
         </div>
     </footer>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html">Главная</a>
+        <a href="about.html">О нас</a>
+        <a href="my_requests.html">Заявки</a>
+        <a href="register.html">Регистрация</a>
+    </div>
+    <div class="overlay" id="overlay"></div>
     <script src="script.js"></script>
 </body>
 </html>

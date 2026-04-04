@@ -16,67 +16,72 @@ function saveAll() {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 }
 
-// ========== ФУНКЦИЯ ДЛЯ ДИНАМИЧЕСКОЙ НАВИГАЦИИ ==========
-function updateNavigation() {
-    const nav = document.getElementById('main-nav');
-    if (nav) {
-        let html = `
-            <a href="index.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="my_requests.html">Заявки</a>
-            <a href="register.html">Регистрация</a>
+// ========== ПЛАВНЫЕ УВЕДОМЛЕНИЯ ==========
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</div>
+        <div class="notification-content">${message}</div>
+        <button class="notification-close">×</button>
+    `;
+    
+    if (!document.querySelector('#notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            .notification {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: white;
+                border-radius: 12px;
+                padding: 15px 20px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+                z-index: 2000;
+                transform: translateX(120%);
+                transition: transform 0.3s ease;
+                max-width: 350px;
+                font-size: 14px;
+                border-left: 4px solid;
+            }
+            .notification-success { border-left-color: #28a745; }
+            .notification-error { border-left-color: #D52B1E; }
+            .notification-info { border-left-color: #2A5C9E; }
+            .notification-icon { font-size: 20px; }
+            .notification-content { flex: 1; color: #333; }
+            .notification-close {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                color: #999;
+                padding: 0 5px;
+            }
+            .notification-close:hover { color: #333; }
+            .notification.show { transform: translateX(0); }
         `;
-        
-        if (currentUser) {
-            html += `<a href="#" id="logout-link">Выйти</a>`;
-        } else {
-            html += `<a href="login.html">Войти</a>`;
-        }
-        
-        nav.innerHTML = html;
-        
-        const logoutLink = document.getElementById('logout-link');
-        if (logoutLink) {
-            logoutLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                logout();
-            });
-        }
+        document.head.appendChild(style);
     }
     
-    // ========== ОБНОВЛЕНИЕ МОБИЛЬНОГО МЕНЮ ==========
-    const mobileLogout = document.getElementById('mobile-logout');
-    if (mobileLogout) {
-        if (currentUser) {
-            mobileLogout.classList.remove('hidden');
-            mobileLogout.onclick = (e) => {
-                e.preventDefault();
-                logout();
-            };
-        } else {
-            mobileLogout.classList.add('hidden');
-        }
-    }
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 10);
     
-    // Также обновляем ссылку входа в мобильном меню
-    const mobileLoginLink = document.querySelector('.mobile-nav a[href="login.html"]');
-    if (mobileLoginLink) {
-        if (currentUser) {
-            mobileLoginLink.classList.add('hidden');
-        } else {
-            mobileLoginLink.classList.remove('hidden');
-        }
-    }
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    });
     
-    // Обновляем ссылку на админку в мобильном меню
-    const mobileAdminLink = document.querySelector('.mobile-nav a[href="admin.html"]');
-    if (mobileAdminLink) {
-        if (currentUser && currentUser.role === 'admin') {
-            mobileAdminLink.classList.remove('hidden');
-        } else {
-            mobileAdminLink.classList.add('hidden');
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
         }
-    }
+    }, 3000);
 }
 
 // ========== РЕГИСТРАЦИЯ ==========
@@ -98,7 +103,6 @@ function loginUser(login, password) {
     if (user) { 
         currentUser = user; 
         saveAll(); 
-        updateNavigation();
         return true; 
     }
     return false;
@@ -108,7 +112,7 @@ function loginUser(login, password) {
 function logout() { 
     currentUser = null; 
     saveAll(); 
-    updateNavigation();
+    showNotification('Вы вышли из системы', 'info');
     location.href = 'index.html'; 
 }
 
@@ -151,6 +155,7 @@ function deleteRequest(id) {
         if (confirm('Удалить заявку?')) {
             requests = requests.filter(r => r.id !== id);
             saveAll();
+            showNotification('Заявка удалена', 'success');
             return true;
         }
     }
@@ -165,6 +170,7 @@ function changeStatus(id, newStatus, reason = '') {
         req.status = newStatus;
         if (newStatus === 'Отклонена') req.rejectReason = reason;
         saveAll();
+        showNotification(`Заявка ${newStatus === 'Решена' ? 'отмечена как решенная' : 'отклонена'}`, 'success');
         return true;
     }
     return false;
@@ -175,36 +181,19 @@ function getAllUsers() {
     return users;
 }
 
-// ========== НОВОСТИ НА ГЛАВНОЙ ==========
-function loadNews() {
-    const news = [
-        {date: '01.01.2026', title: 'Зимние каникулы', text: 'Каникулы с 29.12 по 12.01', img: 'https://via.placeholder.com/300x150?text=Зимние+каникулы'},
-        {date: '02.01.2026', title: 'Родительское собрание', text: '15.01 в 18:00', img: 'https://via.placeholder.com/300x150?text=Родительское+собрание'},
-        {date: '03.01.2026', title: 'Олимпиада по математике', text: 'Школьный этап 20.01', img: 'https://via.placeholder.com/300x150?text=Олимпиада'},
-        {date: '04.01.2026', title: 'Ремонт в столовой', text: 'Завершен ремонт', img: 'https://via.placeholder.com/300x150?text=Ремонт'}
-    ];
-    
-    let container = document.getElementById('news-container');
-    if (container) {
-        let html = '';
-        news.forEach(n => {
-            html += `<div class="news-card">
-                <img src="${n.img}" class="news-image" alt="${n.title}">
-                <div class="news-content">
-                    <div class="news-date">${n.date}</div>
-                    <h3>${n.title}</h3>
-                    <p>${n.text}</p>
-                </div>
-            </div>`;
-        });
-        container.innerHTML = html;
+// ========== СЧЕТЧИК ПОСЕЩЕНИЙ ==========
+function initCounter() {
+    let counter = localStorage.getItem('visitorCounter');
+    if (!counter) {
+        counter = 1250;
+    } else {
+        counter = parseInt(counter) + 1;
     }
-    
-    let counter = parseInt(localStorage.getItem('counter')) || 1250;
-    counter++;
-    localStorage.setItem('counter', counter);
-    let counterSpan = document.getElementById('counter');
-    if (counterSpan) counterSpan.textContent = counter;
+    localStorage.setItem('visitorCounter', counter);
+    const counterSpan = document.getElementById('counter');
+    if (counterSpan) {
+        counterSpan.textContent = counter;
+    }
 }
 
 // ========== БУРГЕР-МЕНЮ ==========
@@ -218,11 +207,13 @@ function initBurgerMenu() {
     function closeMenu() {
         mobileNav.classList.remove('open');
         overlay.classList.remove('active');
+        burgerBtn.classList.remove('open');
     }
     
     function openMenu() {
         mobileNav.classList.add('open');
         overlay.classList.add('active');
+        burgerBtn.classList.add('open');
     }
     
     burgerBtn.addEventListener('click', () => {
@@ -235,7 +226,6 @@ function initBurgerMenu() {
     
     overlay.addEventListener('click', closeMenu);
     
-    // Закрываем меню при клике на ссылку
     mobileNav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', closeMenu);
     });
@@ -248,21 +238,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализация бургер-меню
     initBurgerMenu();
     
-    // Обновляем навигацию для всех страниц
-    updateNavigation();
-    
+    // Счетчик посещений только на главной
     if (path.includes('index.html') || path === '/' || path.endsWith('/')) {
-        loadNews();
+        initCounter();
     }
     
-    let logoutLink = document.getElementById('logout-link');
-    if (logoutLink && !path.includes('my_requests.html')) {
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            logout();
-        });
-    }
-    
+    // Логин
     if (path.includes('login.html')) {
         let loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
@@ -272,6 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let errorDiv = document.getElementById('error');
                 
                 if (loginUser(login, pass)) {
+                    showNotification(`Добро пожаловать, ${currentUser.fio}!`, 'success');
                     if (currentUser.role === 'admin') {
                         location.href = 'admin.html';
                     } else {
@@ -279,11 +261,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 } else {
                     errorDiv.textContent = 'Неверный логин или пароль';
+                    showNotification('Неверный логин или пароль', 'error');
                 }
             });
         }
     }
     
+    // Регистрация
     if (path.includes('register.html')) {
         let registerBtn = document.getElementById('register-btn');
         if (registerBtn) {
@@ -298,20 +282,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (!agree) {
                     errorDiv.textContent = 'Необходимо согласие на обработку данных';
+                    showNotification('Необходимо согласие на обработку данных', 'error');
                     return;
                 }
                 
                 let result = register(fio, login, email, pass, pass2);
                 if (result === 'ok') {
-                    alert('Регистрация успешна! Теперь можно войти.');
-                    location.href = 'login.html';
+                    showNotification('Регистрация успешна! Теперь можно войти.', 'success');
+                    setTimeout(() => { location.href = 'login.html'; }, 1500);
                 } else {
                     errorDiv.textContent = result;
+                    showNotification(result, 'error');
                 }
             });
         }
     }
     
+    // Создание заявки
     if (path.includes('create_request.html')) {
         if (!currentUser) {
             location.href = 'login.html';
@@ -345,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (submitBtn) {
             submitBtn.addEventListener('click', function() {
                 if (!canCreateRequests()) {
-                    document.getElementById('error').textContent = 'У вас нет прав для создания заявки.';
+                    showNotification('У вас нет прав для создания заявки', 'error');
                     return;
                 }
                 
@@ -354,25 +341,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 let description = document.getElementById('description').value.trim();
                 
                 if (!title || !description) {
-                    document.getElementById('error').textContent = 'Заполните все поля';
+                    showNotification('Заполните все поля', 'error');
                     return;
                 }
                 
                 if (!category) {
-                    document.getElementById('error').textContent = 'Выберите категорию';
+                    showNotification('Выберите категорию', 'error');
                     return;
                 }
                 
                 if (createRequest(title, category, description)) {
-                    alert('Заявка успешно создана!');
-                    location.href = 'my_requests.html';
+                    showNotification('Заявка успешно создана!', 'success');
+                    setTimeout(() => { location.href = 'my_requests.html'; }, 1000);
                 } else {
-                    document.getElementById('error').textContent = 'Ошибка при создании заявки.';
+                    showNotification('Ошибка при создании заявки', 'error');
                 }
             });
         }
     }
     
+    // Мои заявки
     if (path.includes('my_requests.html')) {
         if (!currentUser) {
             location.href = 'login.html';
@@ -414,17 +402,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 let statusText = r.status === 'Новая' ? '🟡 Новая' : (r.status === 'Решена' ? '✅ Решена' : '❌ Отклонена');
                 html += `<tr>
                     <td>${r.date}</td>
-                    <td>${r.title}</td>
+                    <td><strong>${r.title}</strong></td>
                     <td>${r.category}</td>
                     <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
                     <td>
-                        ${r.status === 'Новая' ? `<button class="danger delete-req-btn" data-id="${r.id}">🗑 Удалить</button>` : (r.status === 'Отклонена' ? `<span title="${r.rejectReason || ''}">❓ Причина: ${r.rejectReason || 'не указана'}</span>` : '—')}
+                        ${r.status === 'Новая' ? `<button class="danger delete-req-btn" data-id="${r.id}">🗑 Удалить</button>` : (r.status === 'Отклонена' ? `<span title="${r.rejectReason || ''}" style="font-size:12px; color:#999;">❓ ${r.rejectReason || 'нет причины'}</span>` : '—')}
                     </td>
                 </tr>`;
             });
             
             if (reqs.length === 0) {
-                html = '<tr><td colspan="5" style="text-align: center;">📭 Нет заявок</td></tr>';
+                html = '<tr><td colspan="5" style="text-align: center; padding: 40px;">📭 Нет заявок</td></tr>';
             }
             
             tbody.innerHTML = html;
@@ -454,6 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadRequestsTable();
     }
     
+    // Админ-панель
     if (path.includes('admin.html')) {
         if (!currentUser || currentUser.role !== 'admin') {
             location.href = 'index.html';
@@ -495,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             saveAll();
                             loadUsersTable();
                             loadAllRequestsTable();
-                            alert(`✅ ${user.fio} теперь учитель!`);
+                            showNotification(`${user.fio} теперь учитель!`, 'success');
                         }
                     }
                 });
@@ -511,7 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             saveAll();
                             loadUsersTable();
                             loadAllRequestsTable();
-                            alert(`⚠️ У ${user.fio} убраны права учителя`);
+                            showNotification(`У ${user.fio} убраны права учителя`, 'info');
                         }
                     }
                 });
@@ -523,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!tbody) return;
             
             let html = '';
-            requests.slice().reverse().forEach(r => {
+            [...requests].reverse().forEach(r => {
                 let user = users.find(u => u.id === r.userId);
                 let username = user ? user.fio : 'Неизвестно';
                 let userRole = user ? (user.role === 'teacher' ? '👨‍🏫 Учитель' : (user.role === 'admin' ? '👑 Админ' : '👤 Пользователь')) : 'Неизвестно';
@@ -534,20 +523,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${r.date}</td>
                     <td>${username}</td>
                     <td>${userRole}</td>
-                    <td>${r.title}</td>
+                    <td><strong>${r.title}</strong></td>
                     <td>${r.category}</td>
                     <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
                     <td>
                         ${r.status === 'Новая' ? 
                             `<button class="solve-req-btn" data-id="${r.id}">✅ Решена</button>
                              <button class="reject-req-btn danger" data-id="${r.id}">❌ Отклонить</button>` : 
-                            (r.status === 'Отклонена' ? `<span title="${r.rejectReason || ''}">📝 Причина: ${r.rejectReason || 'не указана'}</span>` : '—')}
+                            (r.status === 'Отклонена' ? `<span title="${r.rejectReason || ''}" style="font-size:12px; color:#999;">📝 ${r.rejectReason || 'нет причины'}</span>` : '—')}
                     </td>
                 </tr>`;
             });
             
             if (requests.length === 0) {
-                html = '<tr><td colspan="7" style="text-align: center;">📭 Нет заявок</td></tr>';
+                html = '<tr><td colspan="7" style="text-align: center; padding: 40px;">📭 Нет заявок</td></tr>';
             }
             
             tbody.innerHTML = html;
@@ -557,7 +546,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     let id = parseInt(this.dataset.id);
                     if (changeStatus(id, 'Решена')) {
                         loadAllRequestsTable();
-                        alert('✅ Заявка отмечена как решенная');
+                        loadUsersTable();
                     }
                 });
             });
@@ -569,10 +558,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (reason && reason.trim() !== '') {
                         if (changeStatus(id, 'Отклонена', reason)) {
                             loadAllRequestsTable();
-                            alert('❌ Заявка отклонена');
+                            loadUsersTable();
                         }
                     } else if (reason !== null) {
-                        alert('⚠️ Необходимо указать причину отклонения');
+                        showNotification('Необходимо указать причину отклонения', 'error');
                     }
                 });
             });
@@ -599,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         categories = categories.filter(c => c !== cat);
                         saveAll();
                         loadCategoriesList();
-                        alert(`✅ Категория "${cat}" удалена`);
+                        showNotification(`Категория "${cat}" удалена`, 'success');
                     }
                 });
             });
@@ -614,11 +603,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     saveAll();
                     loadCategoriesList();
                     document.getElementById('new-category').value = '';
-                    alert(`✅ Категория "${newCat}" добавлена`);
+                    showNotification(`Категория "${newCat}" добавлена`, 'success');
                 } else if (categories.includes(newCat)) {
-                    alert('⚠️ Такая категория уже существует');
+                    showNotification('Такая категория уже существует', 'error');
                 } else {
-                    alert('⚠️ Введите название категории');
+                    showNotification('Введите название категории', 'error');
                 }
             });
         }

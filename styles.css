@@ -921,3 +921,40 @@ footer::before {
         font-size: 13px;
     }
 }
+/* ========== ФИНАЛЬНЫЙ ФИКС ДЛЯ ТЕЛЕФОНОВ ========== */
+@media (max-width: 768px) {
+    /* Запрещаем горизонтальный скролл всей страницы */
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+        position: relative;
+    }
+    
+    /* Ограничиваем основной контент */
+    main {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Контейнер таблицы может скроллиться внутри */
+    .table-wrapper {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    /* Принудительно прижимаем подвал */
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    main {
+        flex: 1 0 auto;
+    }
+    
+    footer {
+        flex-shrink: 0;
+        width: 100%;
+    }
+}

@@ -617,3 +617,41 @@ document.addEventListener('DOMContentLoaded', function() {
         loadCategoriesList();
     }
 });
+// ========== ФИКС БЕЛОГО МЕСТА НА СТРАНИЦЕ ЗАЯВОК ==========
+function fixRequestsPageHeight() {
+    // Проверяем, находимся ли мы на странице заявок
+    if (window.location.pathname.includes('my_requests.html') || window.location.pathname.includes('admin.html')) {
+        // Даем время на рендер
+        setTimeout(() => {
+            const body = document.body;
+            const html = document.documentElement;
+            const main = document.querySelector('main');
+            const footer = document.querySelector('footer');
+            
+            if (main && footer) {
+                // Сбрасываем возможные лишние отступы
+                main.style.minHeight = '';
+                
+                // Получаем реальную высоту
+                const windowHeight = window.innerHeight;
+                const mainHeight = main.offsetHeight;
+                const footerHeight = footer.offsetHeight;
+                const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+                
+                // Если контент меньше окна, растягиваем main
+                if (mainHeight + footerHeight + headerHeight < windowHeight) {
+                    main.style.minHeight = (windowHeight - footerHeight - headerHeight - 40) + 'px';
+                }
+            }
+        }, 100);
+    }
+}
+
+// Запускаем при загрузке
+document.addEventListener('DOMContentLoaded', fixRequestsPageHeight);
+
+// Запускаем при изменении ориентации и resize
+window.addEventListener('resize', fixRequestsPageHeight);
+window.addEventListener('orientationchange', function() {
+    setTimeout(fixRequestsPageHeight, 200);
+});

@@ -16,6 +16,17 @@ function saveAll() {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 }
 
+// ========== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ ЭКРАНИРОВАНИЯ HTML ==========
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
 // ========== ПЛАВНЫЕ УВЕДОМЛЕНИЯ ==========
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
@@ -231,6 +242,86 @@ function initBurgerMenu() {
     });
 }
 
+// ========== ЗАГРУЗКА ЗАЯВОК (ТАБЛИЦА + КАРТОЧКИ) ==========
+let currentFilter = 'all';
+
+function loadRequestsTable() {
+    let reqs = getUserRequests(currentFilter);
+    let tbody = document.getElementById('requests-table');
+    let cardsContainer = document.getElementById('requests-cards');
+    
+    // Отрисовка таблицы для десктопа
+    if (tbody) {
+        let html = '';
+        reqs.forEach(r => {
+            let statusColor = r.status === 'Новая' ? '#F9A826' : (r.status === 'Решена' ? '#2A5C9E' : '#D52B1E');
+            let statusText = r.status === 'Новая' ? '🟡 Новая' : (r.status === 'Решена' ? '✅ Решена' : '❌ Отклонена');
+            html += `<tr>
+                <td>${escapeHtml(r.date)}</td>
+                <td><strong>${escapeHtml(r.title)}</strong></td>
+                <td>${escapeHtml(r.category)}</td>
+                <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
+                <td>
+                    ${r.status === 'Новая' ? `<button class="danger delete-req-btn" data-id="${r.id}">🗑 Удалить</button>` : (r.status === 'Отклонена' ? `<span title="${escapeHtml(r.rejectReason || '')}" style="font-size:12px; color:#999;">❓ ${escapeHtml(r.rejectReason || 'нет причины')}</span>` : '—')}
+                </td>
+            </tr>`;
+        });
+        
+        if (reqs.length === 0) {
+            html = '<tr><td colspan="5" style="text-align: center; padding: 40px;">📭 Нет заявок</td></tr>';
+        }
+        
+        tbody.innerHTML = html;
+    }
+    
+    // Отрисовка карточек для телефона
+    if (cardsContainer) {
+        let cardsHtml = '';
+        reqs.forEach(r => {
+            let cardClass = r.status === 'Новая' ? 'request-card-new' : (r.status === 'Решена' ? 'request-card-resolved' : 'request-card-rejected');
+            let statusClass = r.status === 'Новая' ? 'status-new' : (r.status === 'Решена' ? 'status-resolved' : 'status-rejected');
+            let statusText = r.status === 'Новая' ? '🟡 Новая' : (r.status === 'Решена' ? '✅ Решена' : '❌ Отклонена');
+            
+            cardsHtml += `
+                <div class="request-card ${cardClass}">
+                    <div class="request-card-header">
+                        <div class="request-card-title">${escapeHtml(r.title)}</div>
+                        <div class="request-card-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="request-card-date">📅 ${escapeHtml(r.date)}</div>
+                    <div class="request-card-category"><span>📁 ${escapeHtml(r.category)}</span></div>
+                    ${r.status === 'Отклонена' && r.rejectReason ? `<div class="request-card-reason">❌ Причина: ${escapeHtml(r.rejectReason)}</div>` : ''}
+                    <div class="request-card-actions">
+                        ${r.status === 'Новая' ? `<button class="danger delete-req-card-btn" data-id="${r.id}">🗑 Удалить</button>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+        if (reqs.length === 0) {
+            cardsHtml = '<div style="text-align: center; padding: 40px; background: white; border-radius: 16px;">📭 Нет заявок</div>';
+        }
+        
+        cardsContainer.innerHTML = cardsHtml;
+        
+        // Добавляем обработчики для кнопок удаления в карточках
+        document.querySelectorAll('.delete-req-card-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let id = parseInt(this.dataset.id);
+                if (deleteRequest(id)) loadRequestsTable();
+            });
+        });
+    }
+    
+    // Обработчики для кнопок удаления в таблице
+    document.querySelectorAll('.delete-req-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            let id = parseInt(this.dataset.id);
+            if (deleteRequest(id)) loadRequestsTable();
+        });
+    });
+}
+
 // ========== ИНИЦИАЛИЗАЦИЯ СТРАНИЦ ==========
 document.addEventListener('DOMContentLoaded', function() {
     let path = window.location.pathname;
@@ -389,53 +480,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        let currentFilter = 'all';
-        
-        function loadRequestsTable() {
-            let reqs = getUserRequests(currentFilter);
-            let tbody = document.getElementById('requests-table');
-            if (!tbody) return;
-            
-            let html = '';
-            reqs.forEach(r => {
-                let statusColor = r.status === 'Новая' ? '#F9A826' : (r.status === 'Решена' ? '#2A5C9E' : '#D52B1E');
-                let statusText = r.status === 'Новая' ? '🟡 Новая' : (r.status === 'Решена' ? '✅ Решена' : '❌ Отклонена');
-                html += `<tr>
-                    <td>${r.date}</td>
-                    <td><strong>${r.title}</strong></td>
-                    <td>${r.category}</td>
-                    <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
-                    <td>
-                        ${r.status === 'Новая' ? `<button class="danger delete-req-btn" data-id="${r.id}">🗑 Удалить</button>` : (r.status === 'Отклонена' ? `<span title="${r.rejectReason || ''}" style="font-size:12px; color:#999;">❓ ${r.rejectReason || 'нет причины'}</span>` : '—')}
-                    </td>
-                </tr>`;
-            });
-            
-            if (reqs.length === 0) {
-                html = '<tr><td colspan="5" style="text-align: center; padding: 40px;">📭 Нет заявок</td></tr>';
-            }
-            
-            tbody.innerHTML = html;
-            
-            document.querySelectorAll('.delete-req-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let id = parseInt(this.dataset.id);
-                    if (deleteRequest(id)) loadRequestsTable();
-                });
-            });
-        }
-        
-        window.filterRequests = function(filter, btnElement) {
+        function filterRequests(filter, btnElement) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             if (btnElement) btnElement.classList.add('active');
             loadRequestsTable();
-        };
+        }
         
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 let filter = this.dataset.filter;
-                window.filterRequests(filter, this);
+                filterRequests(filter, this);
             });
         });
         
@@ -465,9 +520,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     btn = `<button class="make-teacher-btn" data-id="${u.id}">⬆ Назначить учителем</button>`;
                 }
                 html += `<tr>
-                    <td>${u.fio}</td>
-                    <td>${u.login}</td>
-                    <td>${u.email}</td>
+                    <td>${escapeHtml(u.fio)}</td>
+                    <td>${escapeHtml(u.login)}</td>
+                    <td>${escapeHtml(u.email)}</td>
                     <td>${roleText}</td>
                     <td>${btn}</td>
                 </tr>`;
@@ -483,7 +538,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             user.role = 'teacher';
                             saveAll();
                             loadUsersTable();
-                            loadAllRequestsTable();
                             showNotification(`${user.fio} теперь учитель!`, 'success');
                         }
                     }
@@ -499,7 +553,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             user.role = 'user';
                             saveAll();
                             loadUsersTable();
-                            loadAllRequestsTable();
                             showNotification(`У ${user.fio} убраны права учителя`, 'info');
                         }
                     }
@@ -520,17 +573,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 let statusText = r.status === 'Новая' ? '🟡 Новая' : (r.status === 'Решена' ? '✅ Решена' : '❌ Отклонена');
                 
                 html += `<tr>
-                    <td>${r.date}</td>
-                    <td>${username}</td>
+                    <td>${escapeHtml(r.date)}</td>
+                    <td>${escapeHtml(username)}</td>
                     <td>${userRole}</td>
-                    <td><strong>${r.title}</strong></td>
-                    <td>${r.category}</td>
+                    <td><strong>${escapeHtml(r.title)}</strong></td>
+                    <td>${escapeHtml(r.category)}</td>
                     <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
                     <td>
                         ${r.status === 'Новая' ? 
                             `<button class="solve-req-btn" data-id="${r.id}">✅ Решена</button>
                              <button class="reject-req-btn danger" data-id="${r.id}">❌ Отклонить</button>` : 
-                            (r.status === 'Отклонена' ? `<span title="${r.rejectReason || ''}" style="font-size:12px; color:#999;">📝 ${r.rejectReason || 'нет причины'}</span>` : '—')}
+                            (r.status === 'Отклонена' ? `<span title="${escapeHtml(r.rejectReason || '')}" style="font-size:12px; color:#999;">📝 ${escapeHtml(r.rejectReason || 'нет причины')}</span>` : '—')}
                     </td>
                 </tr>`;
             });
@@ -575,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function() {
             categories.forEach(c => {
                 let hasRequests = requests.some(r => r.category === c);
                 html += `<li>
-                    <span>📁 ${c}</span>
+                    <span>📁 ${escapeHtml(c)}</span>
                     ${!hasRequests ? `<button class="delete-cat-btn danger" data-cat="${c}">🗑 Удалить</button>` : '<span style="color: #999;">(есть заявки)</span>'}
                 </li>`;
             });
@@ -616,42 +669,14 @@ document.addEventListener('DOMContentLoaded', function() {
         loadAllRequestsTable();
         loadCategoriesList();
     }
-});
-// ========== ФИКС БЕЛОГО МЕСТА НА СТРАНИЦЕ ЗАЯВОК ==========
-function fixRequestsPageHeight() {
-    // Проверяем, находимся ли мы на странице заявок
-    if (window.location.pathname.includes('my_requests.html') || window.location.pathname.includes('admin.html')) {
-        // Даем время на рендер
-        setTimeout(() => {
-            const body = document.body;
-            const html = document.documentElement;
-            const main = document.querySelector('main');
-            const footer = document.querySelector('footer');
-            
-            if (main && footer) {
-                // Сбрасываем возможные лишние отступы
-                main.style.minHeight = '';
-                
-                // Получаем реальную высоту
-                const windowHeight = window.innerHeight;
-                const mainHeight = main.offsetHeight;
-                const footerHeight = footer.offsetHeight;
-                const headerHeight = document.querySelector('header')?.offsetHeight || 0;
-                
-                // Если контент меньше окна, растягиваем main
-                if (mainHeight + footerHeight + headerHeight < windowHeight) {
-                    main.style.minHeight = (windowHeight - footerHeight - headerHeight - 40) + 'px';
-                }
-            }
-        }, 100);
+    
+    // Кнопка выхода
+    const logoutLink = document.getElementById('logout-link');
+    if (logoutLink && currentUser) {
+        logoutLink.classList.remove('hidden');
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
     }
-}
-
-// Запускаем при загрузке
-document.addEventListener('DOMContentLoaded', fixRequestsPageHeight);
-
-// Запускаем при изменении ориентации и resize
-window.addEventListener('resize', fixRequestsPageHeight);
-window.addEventListener('orientationchange', function() {
-    setTimeout(fixRequestsPageHeight, 200);
 });

@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -695,7 +699,7 @@ footer::before {
     }
 }
 
-/* ========== АДАПТИВНОСТЬ ========== */
+/* ========== АДАПТИВНОСТЬ (ДЕСКТОП ПО УМОЛЧАНИЮ) ========== */
 @media (max-width: 768px) {
     .main-nav {
         display: none;
@@ -777,40 +781,42 @@ footer::before {
         grid-template-columns: repeat(4, 1fr);
     }
 }
-/* ========== АДАПТИВНОСТЬ ДЛЯ ЗАЯВОК (ТЕЛЕФОНЫ) ========== */
+
+/* ========== ДОПОЛНИТЕЛЬНАЯ АДАПТАЦИЯ ДЛЯ ТАБЛИЦ НА ТЕЛЕФОНАХ ========== */
 @media (max-width: 768px) {
-    /* Контейнер таблицы с прокруткой */
+    /* ОБЯЗАТЕЛЬНО: обертка для таблиц с прокруткой */
     .table-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        margin: 0 -5px;
-        padding: 0 5px;
-        border-radius: 0;
+        margin: 15px 0;
+        border-radius: 12px;
     }
     
-    /* Делаем таблицу компактнее */
+    /* Таблица не должна вылезать за границы */
     table {
         min-width: 550px;
+        width: 100%;
         font-size: 13px;
     }
     
+    /* Компактные ячейки */
     th, td {
         padding: 10px 8px;
         white-space: normal;
         word-break: break-word;
     }
     
-    /* Кнопки внутри таблицы */
+    /* Кнопки внутри таблицы — компактные и не ломаются */
     table button {
         padding: 6px 10px;
         font-size: 12px;
         width: auto;
         min-width: 70px;
-        margin: 2px 0;
+        margin: 3px 0;
         display: inline-block;
     }
     
-    /* Группа кнопок в ячейке */
+    /* Для ячейки с несколькими кнопками */
     td:last-child {
         white-space: nowrap;
     }
@@ -823,7 +829,7 @@ footer::before {
         margin-right: 0;
     }
     
-    /* Кнопка новой заявки */
+    /* Кнопка "Новая заявка" на всю ширину */
     .new-request-btn {
         width: 100%;
         text-align: center;
@@ -845,7 +851,7 @@ footer::before {
         min-width: 70px;
     }
     
-    /* Инфо-блоки на телефоне */
+    /* Инфо-блоки */
     .info-box {
         padding: 12px 15px;
         font-size: 13px;
@@ -857,12 +863,12 @@ footer::before {
         font-size: 12px;
     }
     
-    /* Причина отказа на телефоне */
-    td span[title] {
-        font-size: 10px;
-        display: block;
-        max-width: 100px;
+    /* Сообщение "Нет заявок" — теперь оно корректно отображается в одной ячейке */
+    table td[colspan] {
+        text-align: center;
+        padding: 30px 15px;
         white-space: normal;
+        word-break: normal;
     }
     
     /* Админ-панель: кнопки в таблице пользователей */
@@ -872,7 +878,7 @@ footer::before {
         min-width: 60px;
     }
     
-    /* Админ-панель: категории */
+    /* Админ-панель: категории — адаптация */
     #categories-list li {
         flex-wrap: wrap;
         gap: 10px;
@@ -886,7 +892,7 @@ footer::before {
     }
 }
 
-/* Дополнительно для очень маленьких экранов (≤480px) */
+/* Для очень маленьких телефонов (≤480px) */
 @media (max-width: 480px) {
     table {
         min-width: 500px;
@@ -907,5 +913,11 @@ footer::before {
         padding: 5px 10px;
         font-size: 11px;
         min-width: 60px;
+    }
+    
+    /* Еще более компактно для "Нет заявок" */
+    table td[colspan] {
+        padding: 20px 10px;
+        font-size: 13px;
     }
 }

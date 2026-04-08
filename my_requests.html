@@ -1,68 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Заявки - Гимназия №4</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гимназия №4 - Мои заявки</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav class="main-nav">
-            <a href="index.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="my_requests.html">Заявки</a>
-            <a href="register.html" id="auth-link">Зарегистрироваться</a>
-        </nav>
-        <button class="burger-btn" id="burgerBtn">
-            <span></span><span></span><span></span>
-        </button>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <img src="logo/logo.png" alt="Логотип" class="logo-img" onerror="this.src='https://placehold.co/50x50?text=Г4'">
+                    <span>Гимназия №4</span>
+                </a>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="main-nav" id="desktopNav"></nav>
+                
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">А</div>
+                    <div>
+                        <div id="userName">Пользователь</div>
+                        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">Выйти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
-    <main>
-        <h1>Мои заявки</h1>
-        
-        <div id="teacher-info" class="info-box teacher-info hidden">
-            <p>✅ Вы имеете права учителя — вы можете создавать и отправлять заявки.</p>
-        </div>
-        
-        <div id="user-info" class="info-box user-info hidden">
-            <p>⚠️ У вас нет прав учителя — вы не можете создавать заявки. Только просмотр.</p>
-            <p>Обратитесь к администратору для получения прав учителя.</p>
-        </div>
-        
-        <div id="admin-info" class="info-box admin-info hidden">
-            <p>👑 Вы администратор — вы можете управлять всеми заявками и правами пользователей.</p>
-        </div>
-        
-        <button id="new-request-btn" class="new-request-btn">+ Новая заявка</button>
-        
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">Все</button>
-            <button class="filter-btn" data-filter="Новая">Новые</button>
-            <button class="filter-btn" data-filter="Решена">Решенные</button>
-            <button class="filter-btn" data-filter="Отклонена">Отклоненные</button>
-        </div>
-        
-        <!-- Контейнер для карточек (телефон) -->
-        <div class="requests-cards" id="requests-cards"></div>
-        
-        <!-- Таблица для десктопа -->
-        <div class="table-wrapper desktop-only">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Название</th>
-                        <th>Категория</th>
-                        <th>Статус</th>
-                        <th>Действие</th>
-                    </tr>
-                </thead>
-                <tbody id="requests-table"></tbody>
-            </table>
+
+    <div class="mobile-nav" id="mobileNav"></div>
+    <div class="overlay" id="mobileOverlay"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-with-sidebar">
+                <!-- Вертикальное меню для десктопа -->
+                <aside class="sidebar">
+                    <nav class="sidebar-nav">
+                        <a href="my_requests.html" class="active"><i class="fas fa-tasks"></i> Мои заявки</a>
+                        <a href="create_request.html"><i class="fas fa-plus-circle"></i> Создать заявку</a>
+                    </nav>
+                </aside>
+                
+                <div class="main-content-with-sidebar">
+                    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                        <h1 class="page-title" style="margin-bottom: 0;">Мои заявки</h1>
+                        <a href="create_request.html" class="btn btn-accent" id="createRequestBtn">
+                            <i class="fas fa-plus"></i> Новая заявка
+                        </a>
+                    </div>
+                    
+                    <!-- Информационное сообщение для учителя -->
+                    <div class="info-box teacher-info">
+                        <i class="fas fa-info-circle"></i> Уважаемый учитель! Здесь вы можете создавать новые заявки и отслеживать статус уже созданных.
+                    </div>
+                    
+                    <!-- Фильтры -->
+                    <div class="filter-buttons" style="margin-bottom: 1.5rem;">
+                        <button class="filter-btn active" data-filter="all">Все</button>
+                        <button class="filter-btn" data-filter="new">Новые</button>
+                        <button class="filter-btn" data-filter="solved">Решенные</button>
+                        <button class="filter-btn" data-filter="rejected">Отклоненные</button>
+                    </div>
+                    
+                    <!-- Список заявок -->
+                    <div id="requestsList" class="requests-list">
+                        <div class="loading">Загрузка...</div>
+                    </div>
+                    
+                    <div id="emptyState" class="empty-state hidden">
+                        <i class="fas fa-inbox"></i>
+                        <h3>Заявок пока нет</h3>
+                        <p>Создайте свою первую заявку</p>
+                        <a href="create_request.html" class="btn btn-accent mt-2">Создать заявку</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -81,20 +106,14 @@
                 <h3>Навигация</h3>
                 <p><a href="index.html">Главная</a></p>
                 <p><a href="about.html">О нас</a></p>
-                <p><a href="my_requests.html">Заявки</a></p>
+                <p><a href="#" id="footerRequestsLink">Заявки</a></p>
             </div>
         </div>
         <div class="footer-bottom">
             <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
         </div>
     </footer>
-    <div class="mobile-nav" id="mobileNav">
-        <a href="index.html">Главная</a>
-        <a href="about.html">О нас</a>
-        <a href="my_requests.html">Заявки</a>
-        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
-    </div>
-    <div class="overlay" id="overlay"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

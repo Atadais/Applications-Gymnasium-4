@@ -1,60 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>О нас - Гимназия №4</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гимназия №4 - О нас</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav class="main-nav">
-            <a href="index.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="my_requests.html">Заявки</a>
-            <a href="register.html" id="auth-link">Зарегистрироваться</a>
-        </nav>
-        <button class="burger-btn" id="burgerBtn">
-            <span></span><span></span><span></span>
-        </button>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <img src="logo/logo.png" alt="Логотип" class="logo-img" onerror="this.src='https://placehold.co/50x50?text=Г4'">
+                    <span>Гимназия №4</span>
+                </a>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="main-nav" id="desktopNav"></nav>
+                
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">А</div>
+                    <div>
+                        <div id="userName">Пользователь</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
-    <main>
-        <h1>О проекте</h1>
-        <div class="about-container">
-            <h2>Гимназия №4</h2>
-            <p>Гимназия №4 города Нальчик - современное образовательное учреждение с богатой историей.</p>
+
+    <div class="mobile-nav" id="mobileNav"></div>
+    <div class="overlay" id="mobileOverlay"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title text-center">О гимназии</h1>
+            <p class="page-subtitle">
+                Муниципальное бюджетное общеобразовательное учреждение<br>
+                «Гимназия №4» городского округа Нальчик
+            </p>
             
-            <h3>О дипломном проекте</h3>
-            <p>Сайт "Система заявок" создан в рамках дипломной работы студента 4 курса специальности "Информационные системы и программирование".</p>
+            <div class="about-hero animate">
+                <h2>История гимназии</h2>
+                <p>
+                    Гимназия №4 города Нальчик — одно из старейших учебных заведений Кабардино-Балкарской Республики. 
+                    Основанная в 1965 году, наша школа прошла долгий путь развития и сегодня является современным 
+                    образовательным центром, где учатся более 1200 учеников.
+                </p>
+                <p>
+                    В 2005 году школе присвоен статус «Гимназия» с углубленным изучением иностранных языков, 
+                    математики и информатики. Мы гордимся нашими выпускниками, среди которых есть победители 
+                    всероссийских и международных олимпиад.
+                </p>
+            </div>
             
-            <h3>Цели проекта</h3>
-            <ul>
-                <li>Упрощение подачи заявок в школе</li>
-                <li>Автоматизация обработки обращений</li>
-                <li>Удобная коммуникация между учителями и администрацией</li>
-            </ul>
+            <div class="about-stats">
+                <div class="stat-item">
+                    <div class="stat-number">1200+</div>
+                    <div class="stat-label">Учеников</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">85+</div>
+                    <div class="stat-label">Учителей</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Лауреатов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Кружков</div>
+                </div>
+            </div>
             
-            <h3>Права доступа</h3>
-            <ul>
-                <li>👑 Администратор - управляет заявками, категориями и назначает учителей</li>
-                <li>👨‍🏫 Учитель - может создавать и отслеживать свои заявки</li>
-                <li>👤 Пользователь - может только просматривать сайт</li>
-            </ul>
-            
-            <h3>Контакты</h3>
-            <p>📧 bog.men98@gmail.com</p>
-            <p>📞 +7 928 714 97 23</p>
-            <p>📍 Нальчик, ул. Кулиева, д. 20</p>
+            <div class="about-content">
+                <div>
+                    <section class="about-section animate">
+                        <h3>Наша миссия</h3>
+                        <p>
+                            Создание комфортной образовательной среды, способствующей развитию 
+                            интеллектуальных, творческих и личностных качеств каждого ученика, 
+                            подготовке их к успешной жизни в современном мире.
+                        </p>
+                    </section>
+                    
+                    <section class="about-section animate">
+                        <h3>Ценности</h3>
+                        <ul style="margin-left: 1.5rem;">
+                            <li>🏆 Качество образования</li>
+                            <li>🤝 Уважение и взаимопомощь</li>
+                            <li>💡 Инновации и развитие</li>
+                            <li>🌟 Индивидуальный подход</li>
+                        </ul>
+                    </section>
+                </div>
+                
+                <div>
+                    <section class="about-section animate">
+                        <h3>Контакты</h3>
+                        <p><strong>Директор:</strong> Нагоева Римма Артаговна</p>
+                        <p><strong>Приемная:</strong> +7 (8662) 77-37-06</p>
+                        <p><strong>Email:</strong> g4_dipschool@mail.ru</p>
+                        <p><strong>Адрес:</strong> г. Нальчик, проспект Ленина, 69</p>
+                    </section>
+                </div>
+            </div>
         </div>
     </main>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Контакты</h3>
                 <p>📧 bog.men98@gmail.com</p>
                 <p>📞 +7 928 714 97 23</p>
-                <p>📍 Нальчик, ул. Кулиева, д. 20</p>
+                <p>📍 Нальчик, проспект Ленина, 69</p>
             </div>
             <div class="footer-section">
                 <h3>О проекте</h3>
@@ -66,20 +133,14 @@
                 <h3>Навигация</h3>
                 <p><a href="index.html">Главная</a></p>
                 <p><a href="about.html">О нас</a></p>
-                <p><a href="my_requests.html">Заявки</a></p>
+                <p><a href="#" id="footerRequestsLink">Заявки</a></p>
             </div>
         </div>
         <div class="footer-bottom">
             <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
         </div>
     </footer>
-    <div class="mobile-nav" id="mobileNav">
-        <a href="index.html">Главная</a>
-        <a href="about.html">О нас</a>
-        <a href="my_requests.html">Заявки</a>
-        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
-    </div>
-    <div class="overlay" id="overlay"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

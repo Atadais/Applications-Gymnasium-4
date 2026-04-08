@@ -1,75 +1,154 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Админ-панель - Гимназия №4</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гимназия №4 - Админ-панель</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav class="main-nav">
-            <a href="index.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="admin.html">Админ-панель</a>
-            <a href="register.html" id="auth-link">Зарегистрироваться</a>
-        </nav>
-        <button class="burger-btn" id="burgerBtn">
-            <span></span><span></span><span></span>
-        </button>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <img src="logo/logo.png" alt="Логотип" class="logo-img" onerror="this.src='https://placehold.co/50x50?text=Г4'">
+                    <span>Гимназия №4</span>
+                </a>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="main-nav" id="desktopNav"></nav>
+                
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">АА</div>
+                    <div>
+                        <div id="userName">Администратор</div>
+                        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">Выйти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
-    <main>
-        <h1>Панель администратора</h1>
-        
-        <h2>Управление правами учителей</h2>
-        <div class="admin-section">
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ФИО</th>
-                            <th>Логин</th>
-                            <th>Email</th>
-                            <th>Роль</th>
-                            <th>Действие</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-table"></tbody>
-                </table>
+
+    <div class="mobile-nav" id="mobileNav"></div>
+    <div class="overlay" id="mobileOverlay"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Админ-панель</h1>
+            
+            <!-- Статистика -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalRequests">0</div>
+                    <div class="stat-label">Всего заявок</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="newRequests">0</div>
+                    <div class="stat-label">Новых</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="solvedRequests">0</div>
+                    <div class="stat-label">Решенных</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="rejectedRequests">0</div>
+                    <div class="stat-label">Отклоненных</div>
+                </div>
             </div>
-        </div>
-        
-        <h2>Все заявки</h2>
-        <div class="admin-section">
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Пользователь</th>
-                            <th>Роль</th>
-                            <th>Название</th>
-                            <th>Категория</th>
-                            <th>Статус</th>
-                            <th>Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="requests-table"></tbody>
-                </table>
+            
+            <!-- Горизонтальные вкладки -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="requests">📋 Все заявки</button>
+                <button class="tab-btn" data-tab="categories">🏷️ Категории</button>
+                <button class="tab-btn" data-tab="users">👥 Пользователи</button>
             </div>
-        </div>
-        
-        <h2>Управление категориями</h2>
-        <div class="admin-section">
-            <div class="category-add">
-                <input type="text" id="new-category" placeholder="Новая категория">
-                <button id="add-category-btn">Добавить</button>
+            
+            <!-- Вкладка: Все заявки -->
+            <div id="requestsTab" class="tab-content active">
+                <div class="requests-table">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Дата</th>
+                                    <th>Пользователь</th>
+                                    <th>Название</th>
+                                    <th>Категория</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requestsTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="requestsCards" class="requests-cards"></div>
+                </div>
             </div>
-            <h3>Существующие категории:</h3>
-            <ul id="categories-list"></ul>
+            
+            <!-- Вкладка: Категории -->
+            <div id="categoriesTab" class="tab-content">
+                <div class="categories-manager">
+                    <h3>Существующие категории</h3>
+                    <div id="categoriesList" class="category-list"></div>
+                    
+                    <h3>Добавить категорию</h3>
+                    <div class="add-category-form">
+                        <input type="text" id="newCategoryName" placeholder="Новая категория">
+                        <button class="btn btn-accent" onclick="addCategory()">+ Добавить</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Вкладка: Пользователи -->
+            <div id="usersTab" class="tab-content">
+                <div class="requests-table">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ФИО</th>
+                                    <th>Логин</th>
+                                    <th>Email</th>
+                                    <th>Роль</th>
+                                    <th>Заявок</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
+
+    <!-- Модальное окно для отклонения заявки -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Отклонение заявки</h3>
+                <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label>Причина отклонения:</label>
+                <textarea id="rejectReason" rows="4" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeRejectModal()">Отмена</button>
+                <button class="btn btn-danger" onclick="confirmReject()">Отклонить</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -88,20 +167,14 @@
                 <h3>Навигация</h3>
                 <p><a href="index.html">Главная</a></p>
                 <p><a href="about.html">О нас</a></p>
-                <p><a href="admin.html">Админ-панель</a></p>
+                <p><a href="#" id="footerRequestsLink">Заявки</a></p>
             </div>
         </div>
         <div class="footer-bottom">
             <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
         </div>
     </footer>
-    <div class="mobile-nav" id="mobileNav">
-        <a href="index.html">Главная</a>
-        <a href="about.html">О нас</a>
-        <a href="admin.html">Админ-панель</a>
-        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
-    </div>
-    <div class="overlay" id="overlay"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

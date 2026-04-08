@@ -13,8 +13,7 @@
             <a href="index.html">Главная</a>
             <a href="about.html">О нас</a>
             <a href="my_requests.html">Заявки</a>
-            <a href="register.html">Регистрация</a>
-            <a href="#" id="logout-link" class="hidden">Выйти</a>
+            <a href="register.html" id="auth-link">Зарегистрироваться</a>
         </nav>
         <button class="burger-btn" id="burgerBtn">
             <span></span><span></span><span></span>
@@ -45,23 +44,23 @@
             <button class="filter-btn" data-filter="Отклонена">Отклоненные</button>
         </div>
         
-        <!-- АДАПТИВНЫЙ КОНТЕЙНЕР ДЛЯ КАРТОЧЕК (ТЕЛЕФОН) И ТАБЛИЦЫ (ДЕСКТОП) -->
-        <div class="requests-container">
-            <div class="requests-cards" id="requests-cards"></div>
-            <div class="table-wrapper desktop-only">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Название</th>
-                            <th>Категория</th>
-                            <th>Статус</th>
-                            <th>Действие</th>
-                        </tr>
-                    </thead>
-                    <tbody id="requests-table"></tbody>
-                </table>
-            </div>
+        <!-- Контейнер для карточек (телефон) -->
+        <div class="requests-cards" id="requests-cards"></div>
+        
+        <!-- Таблица для десктопа -->
+        <div class="table-wrapper desktop-only">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>Статус</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody id="requests-table"></tbody>
+            </table>
         </div>
     </main>
     <footer>
@@ -93,107 +92,7 @@
         <a href="index.html">Главная</a>
         <a href="about.html">О нас</a>
         <a href="my_requests.html">Заявки</a>
-        <a href="register.html">Регистрация</a>
-    </div>
-    <div class="overlay" id="overlay"></div>
-    <script src="script.js"></script>
-</body>
-</html><!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Заявки - Гимназия №4</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav class="main-nav">
-            <a href="index.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="my_requests.html">Заявки</a>
-            <a href="register.html">Регистрация</a>
-            <a href="#" id="logout-link" class="hidden">Выйти</a>
-        </nav>
-        <button class="burger-btn" id="burgerBtn">
-            <span></span><span></span><span></span>
-        </button>
-    </header>
-    <main>
-        <h1>Мои заявки</h1>
-        
-        <div id="teacher-info" class="info-box teacher-info hidden">
-            <p>✅ Вы имеете права учителя — вы можете создавать и отправлять заявки.</p>
-        </div>
-        
-        <div id="user-info" class="info-box user-info hidden">
-            <p>⚠️ У вас нет прав учителя — вы не можете создавать заявки. Только просмотр.</p>
-            <p>Обратитесь к администратору для получения прав учителя.</p>
-        </div>
-        
-        <div id="admin-info" class="info-box admin-info hidden">
-            <p>👑 Вы администратор — вы можете управлять всеми заявками и правами пользователей.</p>
-        </div>
-        
-        <button id="new-request-btn" class="new-request-btn">+ Новая заявка</button>
-        
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">Все</button>
-            <button class="filter-btn" data-filter="Новая">Новые</button>
-            <button class="filter-btn" data-filter="Решена">Решенные</button>
-            <button class="filter-btn" data-filter="Отклонена">Отклоненные</button>
-        </div>
-        
-        <!-- АДАПТИВНЫЙ КОНТЕЙНЕР ДЛЯ КАРТОЧЕК (ТЕЛЕФОН) И ТАБЛИЦЫ (ДЕСКТОП) -->
-        <div class="requests-container">
-            <div class="requests-cards" id="requests-cards"></div>
-            <div class="table-wrapper desktop-only">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Название</th>
-                            <th>Категория</th>
-                            <th>Статус</th>
-                            <th>Действие</th>
-                        </tr>
-                    </thead>
-                    <tbody id="requests-table"></tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Контакты</h3>
-                <p>📧 bog.men98@gmail.com</p>
-                <p>📞 +7 928 714 97 23</p>
-                <p>📍 Нальчик, ул. Кулиева, д. 20</p>
-            </div>
-            <div class="footer-section">
-                <h3>О проекте</h3>
-                <p>Система заявок</p>
-                <p>Дипломный проект</p>
-                <p>© 2026 Гимназия №4</p>
-            </div>
-            <div class="footer-section">
-                <h3>Навигация</h3>
-                <p><a href="index.html">Главная</a></p>
-                <p><a href="about.html">О нас</a></p>
-                <p><a href="my_requests.html">Заявки</a></p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
-        </div>
-    </footer>
-    <div class="mobile-nav" id="mobileNav">
-        <a href="index.html">Главная</a>
-        <a href="about.html">О нас</a>
-        <a href="my_requests.html">Заявки</a>
-        <a href="register.html">Регистрация</a>
+        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
     </div>
     <div class="overlay" id="overlay"></div>
     <script src="script.js"></script>

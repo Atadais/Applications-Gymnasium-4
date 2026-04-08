@@ -1,81 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Гимназия №4 - Главная</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гимназия №4 - Система заявок</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav class="main-nav">
-            <a href="index.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="my_requests.html">Заявки</a>
-            <a href="register.html" id="auth-link">Зарегистрироваться</a>
-        </nav>
-        <button class="burger-btn" id="burgerBtn">
-            <span></span><span></span><span></span>
-        </button>
-    </header>
-    
-    <main>
-        <h1>Гимназия №4 г. Нальчик</h1>
-        
-        <h2>Последние новости</h2>
-        <div class="news-grid">
-            <div class="news-card" data-news-id="1">
-                <img src="news/news1.jpg" class="news-image" alt="Зимние каникулы" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
-                <div class="news-content">
-                    <div class="news-date">📅 01.01.2026</div>
-                    <h3>Зимние каникулы</h3>
-                    <p>Каникулы с 29.12 по 12.01</p>
-                </div>
-            </div>
-            
-            <div class="news-card" data-news-id="2">
-                <img src="news/news2.jpg" class="news-image" alt="Родительское собрание" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
-                <div class="news-content">
-                    <div class="news-date">📅 02.01.2026</div>
-                    <h3>Родительское собрание</h3>
-                    <p>15.01 в 18:00</p>
-                </div>
-            </div>
-            
-            <div class="news-card" data-news-id="3">
-                <img src="news/news3.jpg" class="news-image" alt="Олимпиада по математике" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
-                <div class="news-content">
-                    <div class="news-date">📅 03.01.2026</div>
-                    <h3>Олимпиада по математике</h3>
-                    <p>Школьный этап 20.01</p>
-                </div>
-            </div>
-            
-            <div class="news-card" data-news-id="4">
-                <img src="news/news4.jpg" class="news-image" alt="Ремонт в столовой" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
-                <div class="news-content">
-                    <div class="news-date">📅 04.01.2026</div>
-                    <h3>Ремонт в столовой</h3>
-                    <p>Завершен ремонт</p>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <img src="logo/logo.png" alt="Логотип" class="logo-img" onerror="this.src='https://placehold.co/50x50?text=Г4'">
+                    <span>Гимназия №4</span>
+                </a>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- Десктопное меню - будет заполняться через JS -->
+                <nav class="main-nav" id="desktopNav"></nav>
+                
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">А</div>
+                    <div>
+                        <div id="userName">Пользователь</div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Модальное окно для новостей -->
-        <div id="newsModal" class="news-modal">
-            <div class="news-modal-content">
-                <img id="modalImage" class="news-modal-image" src="" alt="">
-                <div class="news-modal-body">
-                    <div class="news-modal-date" id="modalDate"></div>
-                    <h2 class="news-modal-title" id="modalTitle"></h2>
-                    <div class="news-modal-description" id="modalDescription"></div>
-                    <button class="news-modal-close" id="closeModalBtn">Закрыть</button>
+    </header>
+
+    <!-- Мобильное меню -->
+    <div class="mobile-nav" id="mobileNav"></div>
+    <div class="overlay" id="mobileOverlay"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <section class="hero-section animate">
+                <h1 class="hero-title">Система заявок</h1>
+                <p class="hero-description">
+                    Гимназия №4 города Нальчик — автоматизированная система подачи и обработки заявок.<br>
+                    Удобно, быстро, прозрачно.
+                </p>
+                <div class="hero-buttons" id="heroButtons">
+                    <a href="login.html" class="btn btn-accent">Войти в систему</a>
+                    <a href="register.html" class="btn">Зарегистрироваться</a>
                 </div>
-            </div>
+            </section>
+
+            <section class="news-section">
+                <h2 class="section-title">📰 Новости гимназии</h2>
+                <p class="section-subtitle">Актуальные события и объявления</p>
+                <div class="news-grid" id="newsGrid"></div>
+            </section>
+
+            <section class="features-section">
+                <h2 class="section-title">Почему удобно?</h2>
+                <div class="features-grid">
+                    <div class="feature-card animate">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Быстро</h3>
+                        <p>Создание заявки занимает 1 минуту</p>
+                    </div>
+                    <div class="feature-card animate">
+                        <div class="feature-icon">📊</div>
+                        <h3>Прозрачно</h3>
+                        <p>Отслеживайте статус заявки онлайн</p>
+                    </div>
+                    <div class="feature-card animate">
+                        <div class="feature-icon">🔔</div>
+                        <h3>Удобно</h3>
+                        <p>Уведомления о статусе заявки</p>
+                    </div>
+                    <div class="feature-card animate">
+                        <div class="feature-icon">📱</div>
+                        <h3>Мобильно</h3>
+                        <p>Работает на любых устройствах</p>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
-    
+
+    <!-- Модальное окно новостей -->
+    <div id="newsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Заголовок</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="news-date" id="modalDate"></p>
+                <p id="modalDescription">Полное описание новости...</p>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -94,22 +121,14 @@
                 <h3>Навигация</h3>
                 <p><a href="index.html">Главная</a></p>
                 <p><a href="about.html">О нас</a></p>
-                <p><a href="my_requests.html">Заявки</a></p>
+                <p><a href="#" id="footerRequestsLink">Заявки</a></p>
             </div>
         </div>
         <div class="footer-bottom">
             <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
         </div>
     </footer>
-    
-    <div class="mobile-nav" id="mobileNav">
-        <a href="index.html">Главная</a>
-        <a href="about.html">О нас</a>
-        <a href="my_requests.html">Заявки</a>
-        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
-    </div>
-    <div class="overlay" id="overlay"></div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>

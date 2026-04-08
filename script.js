@@ -1,22 +1,828 @@
-// ========== ДАННЫЕ ==========
-let users = JSON.parse(localStorage.getItem('users')) || [
-    {id: 1, login: 'admin', password: 'admin', fio: 'Администратор', email: 'admin@mail.ru', role: 'admin'},
-    {id: 2, login: 'ivanov', password: '123', fio: 'Иванов Иван Иванович', email: 'ivanov@mail.ru', role: 'teacher'},
-    {id: 3, login: 'petrov', password: '123', fio: 'Петров Петр Петрович', email: 'petrov@mail.ru', role: 'user'}
-];
-let requests = JSON.parse(localStorage.getItem('requests')) || [];
-let categories = JSON.parse(localStorage.getItem('categories')) || ['Техника', 'Мебель', 'Сантехника', 'Учебные вопросы', 'Методическая работа'];
-let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+// script.js - Полная логика системы заявок Гимназии №4
 
-// ========== СОХРАНЕНИЕ ==========
-function saveAll() {
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('requests', JSON.stringify(requests));
-    localStorage.setItem('categories', JSON.stringify(categories));
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+// --- Глобальные переменные ---
+let currentUser = null;
+let users = [];
+let requests = [];
+let categories = ['Ремонт', 'Закупка', 'Методическая помощь', 'IT', 'Хозяйственные'];
+
+// --- Инициализация ---
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    initAuth();
+    updateNavigation();
+    initMobileMenu();
+    loadNews();
+    initPageSpecificLogic();
+    initVisitorCounter();
+});
+
+// --- Загрузка данных из localStorage ---
+function loadData() {
+    const savedUsers = localStorage.getItem('users');
+    const savedRequests = localStorage.getItem('requests');
+    const savedCategories = localStorage.getItem('categories');
+    
+    if (savedUsers) users = JSON.parse(savedUsers);
+    else {
+        users = [
+            { id: 1, fullName: 'Администратор', login: 'admin', password: 'admin123', email: 'admin@gym4.ru', role: 'admin', regDate: '01.01.2025' }
+        ];
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+    
+    if (savedRequests) requests = JSON.parse(savedRequests);
+    else {
+        requests = [];
+        localStorage.setItem('requests', JSON.stringify(requests));
+    }
+    
+    if (savedCategories) categories = JSON.parse(savedCategories);
+    else localStorage.setItem('categories', JSON.stringify(categories));
+    
+    currentUser = JSON.parse(localStorage.getItem('currentUser'));
 }
 
-// ========== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ ЭКРАНИРОВАНИЯ HTML ==========
+// --- Авторизация и навигация ---
+function initAuth() {
+    const loginLink = document.getElementById('loginLink');
+    const registerLink = document.getElementById('registerLink');
+    const userInfo = document.getElementById('userInfo');
+    const userNameSpan = document.getElementById('userName');
+    const userAvatar = document.getElementById('userAvatar');
+    const logoutLink = document.getElementById('logoutLink');
+    const heroButtons = document.getElementById('heroButtons');
+    
+    if (currentUser) {
+        if (loginLink) loginLink.style.display = 'none';
+        if (registerLink) registerLink.style.display = 'none';
+        if (userInfo) userInfo.style.display = 'flex';
+        if (userNameSpan) userNameSpan.textContent = currentUser.fullName;
+        
+        if (userAvatar) {
+            if (currentUser.role === 'admin') {
+                userAvatar.textContent = 'АА';
+            } else {
+                userAvatar.textContent = getInitials(currentUser.fullName);
+            }
+        }
+        
+        if (heroButtons) heroButtons.style.display = 'none';
+        
+        if (logoutLink) {
+            logoutLink.onclick = (e) => {
+                e.preventDefault();
+                logout();
+            };
+        }
+    } else {
+        if (loginLink) loginLink.style.display = 'block';
+        if (registerLink) registerLink.style.display = 'block';
+        if (userInfo) userInfo.style.display = 'none';
+        if (heroButtons) heroButtons.style.display = 'flex';
+    }
+}
+
+function updateNavigation() {
+    const desktopNav = document.getElementById('desktopNav');
+    const mobileNav = document.getElementById('mobileNav');
+    const footerRequestsLink = document.getElementById('footerRequestsLink');
+    
+    if (!desktopNav) return;
+    
+    let navHtml = '';
+    let mobileHtml = '';
+    
+    if (currentUser) {
+        if (currentUser.role === 'admin') {
+            navHtml = `
+                <ul>
+                    <li><a href="index.html" ${isActive('index.html') ? 'class="active"' : ''}><i class="fas fa-home"></i> Главная</a></li>
+                    <li><a href="about.html" ${isActive('about.html') ? 'class="active"' : ''}><i class="fas fa-info-circle"></i> О нас</a></li>
+                    <li><a href="admin.html" ${isActive('admin.html') ? 'class="active"' : ''}><i class="fas fa-crown"></i> Админ-панель</a></li>
+                </ul>
+            `;
+            mobileHtml = `
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                <a href="about.html"><i class="fas fa-info-circle"></i> О нас</a>
+                <a href="admin.html"><i class="fas fa-crown"></i> Админ-панель</a>
+                <a href="#" id="mobileLogoutLink"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            `;
+            if (footerRequestsLink) footerRequestsLink.href = 'admin.html';
+        } else if (currentUser.role === 'teacher') {
+            navHtml = `
+                <ul>
+                    <li><a href="index.html" ${isActive('index.html') ? 'class="active"' : ''}><i class="fas fa-home"></i> Главная</a></li>
+                    <li><a href="about.html" ${isActive('about.html') ? 'class="active"' : ''}><i class="fas fa-info-circle"></i> О нас</a></li>
+                    <li><a href="my_requests.html" ${isActive('my_requests.html') ? 'class="active"' : ''}><i class="fas fa-tasks"></i> Мои заявки</a></li>
+                </ul>
+            `;
+            mobileHtml = `
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                <a href="about.html"><i class="fas fa-info-circle"></i> О нас</a>
+                <a href="my_requests.html"><i class="fas fa-tasks"></i> Мои заявки</a>
+                <a href="#" id="mobileLogoutLink"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            `;
+            if (footerRequestsLink) footerRequestsLink.href = 'my_requests.html';
+        } else {
+            navHtml = `
+                <ul>
+                    <li><a href="index.html" ${isActive('index.html') ? 'class="active"' : ''}><i class="fas fa-home"></i> Главная</a></li>
+                    <li><a href="about.html" ${isActive('about.html') ? 'class="active"' : ''}><i class="fas fa-info-circle"></i> О нас</a></li>
+                    <li><a href="#" onclick="alert('Доступ к заявкам откроется после подтверждения администратором'); return false;"><i class="fas fa-clock"></i> Заявки (ожидание)</a></li>
+                </ul>
+            `;
+            mobileHtml = `
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                <a href="about.html"><i class="fas fa-info-circle"></i> О нас</a>
+                <a href="#" onclick="alert('Доступ к заявкам откроется после подтверждения администратором'); return false;"><i class="fas fa-clock"></i> Заявки (ожидание)</a>
+                <a href="#" id="mobileLogoutLink"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            `;
+            if (footerRequestsLink) {
+                footerRequestsLink.href = '#';
+                footerRequestsLink.onclick = (e) => {
+                    e.preventDefault();
+                    alert('Доступ к заявкам откроется после подтверждения администратором');
+                };
+            }
+        }
+    } else {
+        navHtml = `
+            <ul>
+                <li><a href="index.html" ${isActive('index.html') ? 'class="active"' : ''}><i class="fas fa-home"></i> Главная</a></li>
+                <li><a href="about.html" ${isActive('about.html') ? 'class="active"' : ''}><i class="fas fa-info-circle"></i> О нас</a></li>
+                <li><a href="login.html"><i class="fas fa-sign-in-alt"></i> Заявки</a></li>
+                <li><a href="register.html" ${isActive('register.html') ? 'class="active"' : ''}><i class="fas fa-user-plus"></i> Регистрация</a></li>
+            </ul>
+        `;
+        mobileHtml = `
+            <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+            <a href="about.html"><i class="fas fa-info-circle"></i> О нас</a>
+            <a href="login.html"><i class="fas fa-sign-in-alt"></i> Вход</a>
+            <a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>
+        `;
+        if (footerRequestsLink) footerRequestsLink.href = 'login.html';
+    }
+    
+    desktopNav.innerHTML = navHtml;
+    if (mobileNav) mobileNav.innerHTML = mobileHtml;
+    
+    const mobileLogout = document.getElementById('mobileLogoutLink');
+    if (mobileLogout) {
+        mobileLogout.onclick = (e) => {
+            e.preventDefault();
+            logout();
+        };
+    }
+}
+
+function isActive(page) {
+    return window.location.pathname.includes(page);
+}
+
+function logout() {
+    localStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+}
+
+function getInitials(name) {
+    if (!name) return '??';
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+}
+
+function initMobileMenu() {
+    const burger = document.getElementById('mobileMenuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    const overlay = document.getElementById('mobileOverlay');
+    
+    if (burger && mobileNav && overlay) {
+        burger.onclick = () => {
+            mobileNav.classList.toggle('open');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+        };
+        overlay.onclick = () => {
+            mobileNav.classList.remove('open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+    }
+}
+
+function initVisitorCounter() {
+    const counter = document.getElementById('visitor-counter');
+    if (!counter) return;
+    
+    let count = parseInt(localStorage.getItem('visitorCount')) || 128;
+    counter.textContent = count;
+    
+    setInterval(() => {
+        let change = Math.floor(Math.random() * 5) - 2;
+        count = Math.max(100, count + change);
+        localStorage.setItem('visitorCount', count);
+        counter.textContent = count;
+    }, 5000);
+}
+
+// ========== НОВОСТИ С ПОДРОБНЫМ ТЕКСТОМ ==========
+function loadNews() {
+    const newsContainer = document.getElementById('newsGrid');
+    if (!newsContainer) return;
+    
+    // НОВОСТИ С ПОДРОБНЫМИ ОПИСАНИЯМИ
+    const newsData = [
+        { 
+            id: 1, 
+            title: 'Зимние каникулы', 
+            date: '01.01.2026', 
+            shortDesc: 'Каникулы с 29.12 по 12.01',
+            fullText: '📢 Уважаемые учащиеся, учителя и родители!\n\nПоздравляем всех с наступающим Новым годом! 🎄\n\nЗимние каникулы продлятся с 29 декабря 2025 года по 12 января 2026 года.\n\n📌 Важная информация:\n• Школа будет закрыта на период каникул\n• Дежурный администратор на связи по телефону +7 (928) 714-97-23\n• Экстренные вопросы можно направлять на email: admin@gym4.ru\n\nЖелаем вам отличного отдыха, набраться сил и с новыми силами приступить к учебе 13 января.\n\nБерегите себя и своих близких! ✨' 
+        },
+        { 
+            id: 2, 
+            title: 'Педагогический совет', 
+            date: '15.01.2026', 
+            shortDesc: 'Итоги второй четверти',
+            fullText: '📢 Уважаемые коллеги!\n\n15 января 2026 года в 15:00 в актовом зале состоится педагогический совет.\n\n📌 Повестка дня:\n1. Итоги успеваемости за вторую четверть\n2. Анализ результатов контрольных работ\n3. Планирование работы на третью четверть\n4. Утверждение графика проведения олимпиад\n5. Разное\n\n📍 Место проведения: актовый зал (3 этаж)\n⏰ Время: 15:00\n\nЯвка всех учителей обязательна. При себе иметь планшет или тетрадь для заметок.' 
+        },
+        { 
+            id: 3, 
+            title: 'День открытых дверей', 
+            date: '20.02.2026', 
+            shortDesc: 'Приглашаем будущих первоклассников и их родителей',
+            fullText: '📢 Уважаемые родители будущих первоклассников!\n\n20 февраля 2026 года в нашей гимназии пройдет День открытых дверей.\n\n📌 Программа мероприятия:\n• 10:00 - 11:00 — Экскурсия по гимназии\n• 11:00 - 12:00 — Встреча с директором и учителями начальных классов\n• 12:00 - 13:00 — Открытые уроки и мастер-классы\n• 13:00 - 14:00 — Ответы на вопросы родителей\n\n📍 Адрес: г. Нальчик, ул. Кулиева, д. 20\n📞 Телефон для справок: +7 (8662) 77-55-44\n\nПри себе иметь паспорт. Ждем вас!' 
+        },
+        { 
+            id: 4, 
+            title: 'Олимпиада по математике', 
+            date: '10.03.2026', 
+            shortDesc: 'Школьный этап Всероссийской олимпиады',
+            fullText: '📢 Внимание, ученики 7-11 классов!\n\n10 марта 2026 года состоится школьный этап Всероссийской олимпиады по математике.\n\n📌 Информация:\n• Начало: 10:00\n• Место: кабинет 301\n• Продолжительность: 3 часа (180 минут)\n\n📌 Что нужно знать:\n• При себе иметь паспорт или дневник\n• Разрешены: ручка, карандаш, линейка, циркуль\n• Запрещены: телефоны, калькуляторы, шпаргалки\n\n🏆 Победители будут награждены грамотами и призами.\n\nЖелаем удачи! 🍀' 
+        }
+    ];
+    
+    newsContainer.innerHTML = newsData.map(news => `
+        <div class="news-card animate" data-news-id="${news.id}">
+            <img src="news/news${news.id}.jpg" class="news-image" alt="${news.title}" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
+            <div class="news-content">
+                <div class="news-date">📅 ${news.date}</div>
+                <h3>${news.title}</h3>
+                <p>${news.shortDesc}</p>
+            </div>
+        </div>
+    `).join('');
+    
+    document.querySelectorAll('.news-card').forEach(card => {
+        card.onclick = () => {
+            const id = parseInt(card.dataset.newsId);
+            const news = newsData.find(n => n.id === id);
+            if (news) showNewsModal(news);
+        };
+    });
+}
+
+function showNewsModal(news) {
+    const modal = document.getElementById('newsModal');
+    if (!modal) return;
+    
+    document.getElementById('modalTitle').textContent = news.title;
+    document.getElementById('modalDate').textContent = `📅 ${news.date}`;
+    // Преобразуем переносы строк в <br> для красивого отображения
+    document.getElementById('modalDescription').innerHTML = news.fullText.replace(/\n/g, '<br>');
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    const closeModal = () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+    
+    modal.querySelector('.modal-close').onclick = closeModal;
+    modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+    
+    // Закрытие по ESC
+    document.onkeydown = (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    };
+}
+
+// --- Инициализация страниц ---
+function initPageSpecificLogic() {
+    const path = window.location.pathname;
+    
+    if (path.includes('register.html')) initRegister();
+    else if (path.includes('login.html')) initLogin();
+    else if (path.includes('my_requests.html')) initMyRequests();
+    else if (path.includes('create_request.html')) initCreateRequest();
+    else if (path.includes('admin.html')) initAdmin();
+}
+
+// --- Регистрация ---
+function initRegister() {
+    const form = document.getElementById('registerForm');
+    if (!form) return;
+    
+    const loginInput = document.getElementById('login');
+    const existingLogins = users.map(u => u.login);
+    
+    loginInput.addEventListener('input', function() {
+        const login = this.value.trim();
+        if (login.length === 0) return;
+        
+        if (!/^[a-zA-Z0-9_]+$/.test(login)) {
+            document.getElementById('loginError').textContent = 'Только латиница, цифры и _';
+            document.getElementById('loginError').style.display = 'block';
+            document.getElementById('loginSuccess').style.display = 'none';
+            this.classList.add('error');
+        } else if (existingLogins.includes(login)) {
+            document.getElementById('loginError').textContent = 'Логин уже занят';
+            document.getElementById('loginError').style.display = 'block';
+            document.getElementById('loginSuccess').style.display = 'none';
+            this.classList.add('error');
+        } else {
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginSuccess').style.display = 'block';
+            this.classList.remove('error');
+            this.classList.add('success');
+        }
+    });
+    
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        
+        const fullName = document.getElementById('fullName').value.trim();
+        const login = document.getElementById('login').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        const agree = document.getElementById('agree').checked;
+        
+        let isValid = true;
+        
+        if (!fullName || !/^[А-Яа-яЁё\s-]+$/.test(fullName)) {
+            showError('fullNameError', true);
+            isValid = false;
+        }
+        if (!login || existingLogins.includes(login)) {
+            showError('loginError', true);
+            isValid = false;
+        }
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showError('emailError', true);
+            isValid = false;
+        }
+        if (!password || password.length < 6) {
+            showError('passwordError', true);
+            isValid = false;
+        }
+        if (password !== confirm) {
+            showError('confirmPasswordError', true);
+            isValid = false;
+        }
+        if (!agree) {
+            showError('agreeError', true);
+            isValid = false;
+        }
+        
+        if (!isValid) return;
+        
+        const newUser = {
+            id: Date.now(),
+            fullName: fullName,
+            login: login,
+            password: password,
+            email: email,
+            role: 'user',
+            regDate: new Date().toLocaleDateString('ru-RU')
+        };
+        
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', JSON.stringify(newUser));
+        
+        alert(`Регистрация успешна! Добро пожаловать, ${fullName}!\n\nПосле подтверждения администратором вам откроется доступ к созданию заявок.`);
+        window.location.href = 'index.html';
+    };
+}
+
+function showError(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? 'block' : 'none';
+}
+
+// --- Вход ---
+function initLogin() {
+    const form = document.getElementById('loginForm');
+    if (!form) return;
+    
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        
+        const login = document.getElementById('login').value.trim();
+        const password = document.getElementById('password').value;
+        
+        const user = users.find(u => u.login === login && u.password === password);
+        
+        if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            alert(`Добро пожаловать, ${user.fullName}!`);
+            
+            if (user.role === 'admin') {
+                window.location.href = 'admin.html';
+            } else if (user.role === 'teacher') {
+                window.location.href = 'my_requests.html';
+            } else {
+                window.location.href = 'index.html';
+                setTimeout(() => {
+                    alert('Ваш аккаунт ожидает подтверждения администратором. Доступ к заявкам откроется позже.');
+                }, 500);
+            }
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+            document.getElementById('passwordError').style.display = 'block';
+        }
+    };
+}
+
+// --- Мои заявки ---
+function initMyRequests() {
+    if (!currentUser || currentUser.role !== 'teacher') {
+        alert('Доступ запрещен. Только подтвержденные учителя могут создавать заявки.');
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    loadUserRequests();
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterRequests(btn.dataset.filter);
+        };
+    });
+}
+
+function loadUserRequests() {
+    const userRequests = requests.filter(r => r.userId === currentUser.id);
+    renderRequests(userRequests);
+}
+
+function renderRequests(requestsList) {
+    const container = document.getElementById('requestsList');
+    const emptyState = document.getElementById('emptyState');
+    
+    if (!container) return;
+    
+    if (requestsList.length === 0) {
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    if (emptyState) emptyState.classList.add('hidden');
+    
+    container.innerHTML = requestsList.map(req => `
+        <div class="request-card ${req.status}">
+            <div class="request-header">
+                <div class="request-title">${escapeHtml(req.title)}</div>
+                <div class="request-date">📅 ${req.date}</div>
+            </div>
+            <div class="request-category">📂 ${req.category}</div>
+            <div class="request-description">${escapeHtml(req.description)}</div>
+            ${req.status === 'rejected' && req.rejectReason ? `<div class="request-reason">❌ Причина: ${escapeHtml(req.rejectReason)}</div>` : ''}
+            <div class="request-footer">
+                <span class="status-badge status-${req.status}">${getStatusText(req.status)}</span>
+                ${req.status === 'new' ? `<button class="btn btn-danger btn-sm" onclick="deleteRequest(${req.id})"><i class="fas fa-trash"></i> Удалить</button>` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function filterRequests(filter) {
+    let filtered = requests.filter(r => r.userId === currentUser.id);
+    if (filter !== 'all') filtered = filtered.filter(r => r.status === filter);
+    renderRequests(filtered);
+}
+
+function deleteRequest(id) {
+    if (confirm('Удалить заявку?')) {
+        requests = requests.filter(r => r.id !== id);
+        localStorage.setItem('requests', JSON.stringify(requests));
+        loadUserRequests();
+    }
+}
+
+function getStatusText(status) {
+    const statuses = { 'new': '🟡 Новая', 'solved': '✅ Решена', 'rejected': '❌ Отклонена' };
+    return statuses[status] || status;
+}
+
+// --- Создание заявки ---
+function initCreateRequest() {
+    if (!currentUser || currentUser.role !== 'teacher') {
+        alert('Доступ запрещен. Только подтвержденные учителя могут создавать заявки.');
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    const categorySelect = document.getElementById('requestCategory');
+    if (categorySelect) {
+        categories = JSON.parse(localStorage.getItem('categories')) || categories;
+        categorySelect.innerHTML = '<option value="">Выберите категорию</option>' + 
+            categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+    }
+    
+    const form = document.getElementById('createRequestForm');
+    if (form) {
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('requestTitle').value.trim();
+            const category = document.getElementById('requestCategory').value;
+            const description = document.getElementById('requestDescription').value.trim();
+            
+            let isValid = true;
+            if (!title) { showError('titleError', true); isValid = false; }
+            if (!category) { showError('categoryError', true); isValid = false; }
+            if (!description) { showError('descriptionError', true); isValid = false; }
+            
+            if (!isValid) return;
+            
+            const newRequest = {
+                id: Date.now(),
+                userId: currentUser.id,
+                title: title,
+                category: category,
+                description: description,
+                date: new Date().toLocaleDateString('ru-RU'),
+                status: 'new',
+                rejectReason: null
+            };
+            
+            requests.push(newRequest);
+            localStorage.setItem('requests', JSON.stringify(requests));
+            alert('Заявка успешно создана!');
+            window.location.href = 'my_requests.html';
+        };
+    }
+}
+
+// --- Админ-панель ---
+function initAdmin() {
+    if (!currentUser || currentUser.role !== 'admin') {
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    loadAllRequests();
+    loadCategoriesList();
+    loadUsersList();
+    updateStats();
+    
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    function activateTab(tabId) {
+        tabBtns.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        const targetBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+        if (targetBtn) targetBtn.classList.add('active');
+        
+        const activeContent = document.getElementById(`${tabId}Tab`);
+        if (activeContent) activeContent.classList.add('active');
+    }
+    
+    tabBtns.forEach(btn => {
+        btn.onclick = (e) => {
+            e.preventDefault();
+            const tabId = btn.getAttribute('data-tab');
+            if (tabId) activateTab(tabId);
+        };
+    });
+}
+
+function loadAllRequests() {
+    const tableBody = document.getElementById('requestsTableBody');
+    const cardsContainer = document.getElementById('requestsCards');
+    
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = requests.map(req => {
+        const user = users.find(u => u.id === req.userId);
+        return `
+            <tr>
+                <td>${req.id}</td>
+                <td>${req.date}</td>
+                <td>${user ? user.fullName : 'Неизвестно'} ${user && user.role === 'user' ? '(ожидает)' : ''}</td>
+                <td>${escapeHtml(req.title)}</td>
+                <td>${req.category}</td>
+                <td><span class="status-badge status-${req.status}">${getStatusText(req.status)}</span></td>
+                <td>
+                    ${req.status === 'new' ? `
+                        <button class="btn btn-success btn-sm" onclick="solveRequest(${req.id})">✅ Решить</button>
+                        <button class="btn btn-danger btn-sm" onclick="openRejectModal(${req.id})">❌ Отклонить</button>
+                    ` : ''}
+                 </td>
+            </tr>
+        `;
+    }).join('');
+    
+    if (cardsContainer) {
+        cardsContainer.innerHTML = requests.map(req => {
+            const user = users.find(u => u.id === req.userId);
+            return `
+                <div class="request-card ${req.status}">
+                    <div class="request-header">
+                        <div class="request-title">${escapeHtml(req.title)}</div>
+                        <div class="request-date">📅 ${req.date}</div>
+                    </div>
+                    <div class="request-category">📂 ${req.category}</div>
+                    <div><strong>👤 ${user ? user.fullName : 'Неизвестно'}</strong></div>
+                    <div class="request-description">${escapeHtml(req.description)}</div>
+                    ${req.status === 'rejected' && req.rejectReason ? `<div class="request-reason">❌ Причина: ${escapeHtml(req.rejectReason)}</div>` : ''}
+                    <div class="request-footer">
+                        <span class="status-badge status-${req.status}">${getStatusText(req.status)}</span>
+                        ${req.status === 'new' ? `
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-success btn-sm" onclick="solveRequest(${req.id})">✅ Решить</button>
+                                <button class="btn btn-danger btn-sm" onclick="openRejectModal(${req.id})">❌ Отклонить</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+function loadCategoriesList() {
+    const container = document.getElementById('categoriesList');
+    if (!container) return;
+    
+    categories = JSON.parse(localStorage.getItem('categories')) || categories;
+    container.innerHTML = categories.map(cat => `
+        <div class="category-item">
+            <span>${cat}</span>
+            <button class="btn btn-danger btn-sm" onclick="deleteCategory('${cat}')">🗑️</button>
+        </div>
+    `).join('');
+}
+
+function loadUsersList() {
+    const tableBody = document.getElementById('usersTableBody');
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = users.map(user => {
+        const userRequests = requests.filter(r => r.userId === user.id).length;
+        const roleDisplay = user.role === 'admin' ? '👑 Админ' : (user.role === 'teacher' ? '👨‍🏫 Учитель' : '👤 Пользователь (ожидает)');
+        
+        return `
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.fullName}</td>
+                <td>${user.login}</td>
+                <td>${user.email}</td>
+                <td>
+                    ${roleDisplay}
+                    ${user.role === 'user' ? `
+                        <button class="btn btn-success btn-sm" style="margin-left: 0.5rem;" onclick="confirmUser(${user.id})">
+                            ✅ Подтвердить
+                        </button>
+                    ` : ''}
+                    ${user.role === 'teacher' ? `
+                        <button class="btn btn-warning btn-sm" style="margin-left: 0.5rem;" onclick="revokeTeacher(${user.id})">
+                            🔄 Отозвать
+                        </button>
+                    ` : ''}
+                 </td>
+                <td>${userRequests}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function confirmUser(userId) {
+    if (confirm('Подтвердить доступ пользователя к созданию заявок?')) {
+        const user = users.find(u => u.id === userId);
+        if (user && user.role === 'user') {
+            user.role = 'teacher';
+            localStorage.setItem('users', JSON.stringify(users));
+            loadUsersList();
+            alert(`Пользователь ${user.fullName} теперь имеет доступ к созданию заявок!`);
+        }
+    }
+}
+
+function revokeTeacher(userId) {
+    if (confirm('Отозвать доступ к созданию заявок у этого учителя?')) {
+        const user = users.find(u => u.id === userId);
+        if (user && user.role === 'teacher') {
+            user.role = 'user';
+            localStorage.setItem('users', JSON.stringify(users));
+            loadUsersList();
+            alert(`Доступ пользователя ${user.fullName} к заявкам отозван.`);
+        }
+    }
+}
+
+function updateStats() {
+    const totalEl = document.getElementById('totalRequests');
+    const newEl = document.getElementById('newRequests');
+    const solvedEl = document.getElementById('solvedRequests');
+    const rejectedEl = document.getElementById('rejectedRequests');
+    
+    if (totalEl) totalEl.textContent = requests.length;
+    if (newEl) newEl.textContent = requests.filter(r => r.status === 'new').length;
+    if (solvedEl) solvedEl.textContent = requests.filter(r => r.status === 'solved').length;
+    if (rejectedEl) rejectedEl.textContent = requests.filter(r => r.status === 'rejected').length;
+}
+
+let currentRejectId = null;
+
+function openRejectModal(id) {
+    currentRejectId = id;
+    const modal = document.getElementById('rejectModal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeRejectModal() {
+    const modal = document.getElementById('rejectModal');
+    if (modal) modal.classList.remove('active');
+    const reasonInput = document.getElementById('rejectReason');
+    if (reasonInput) reasonInput.value = '';
+}
+
+function confirmReject() {
+    const reason = document.getElementById('rejectReason').value.trim();
+    if (!reason) {
+        alert('Укажите причину отклонения');
+        return;
+    }
+    
+    const request = requests.find(r => r.id === currentRejectId);
+    if (request) {
+        request.status = 'rejected';
+        request.rejectReason = reason;
+        localStorage.setItem('requests', JSON.stringify(requests));
+        loadAllRequests();
+        updateStats();
+        closeRejectModal();
+        alert('Заявка отклонена');
+    }
+}
+
+function solveRequest(id) {
+    if (confirm('Отметить заявку как решенную?')) {
+        const request = requests.find(r => r.id === id);
+        if (request) {
+            request.status = 'solved';
+            localStorage.setItem('requests', JSON.stringify(requests));
+            loadAllRequests();
+            updateStats();
+            alert('Заявка решена');
+        }
+    }
+}
+
+function addCategory() {
+    const input = document.getElementById('newCategoryName');
+    const name = input.value.trim();
+    if (!name) {
+        alert('Введите название категории');
+        return;
+    }
+    
+    categories = JSON.parse(localStorage.getItem('categories')) || categories;
+    if (categories.includes(name)) {
+        alert('Такая категория уже существует');
+        return;
+    }
+    
+    categories.push(name);
+    localStorage.setItem('categories', JSON.stringify(categories));
+    loadCategoriesList();
+    input.value = '';
+    alert('Категория добавлена');
+}
+
+function deleteCategory(name) {
+    if (confirm(`Удалить категорию "${name}"?`)) {
+        categories = categories.filter(c => c !== name);
+        localStorage.setItem('categories', JSON.stringify(categories));
+        loadCategoriesList();
+        alert('Категория удалена');
+    }
+}
+
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -26,757 +832,3 @@ function escapeHtml(str) {
         return m;
     });
 }
-
-// ========== ПЛАВНЫЕ УВЕДОМЛЕНИЯ ==========
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</div>
-        <div class="notification-content">${message}</div>
-        <button class="notification-close">×</button>
-    `;
-    
-    if (!document.querySelector('#notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'notification-styles';
-        style.textContent = `
-            .notification {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: white;
-                border-radius: 12px;
-                padding: 15px 20px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-                z-index: 2000;
-                transform: translateX(120%);
-                transition: transform 0.3s ease;
-                max-width: 350px;
-                font-size: 14px;
-                border-left: 4px solid;
-            }
-            .notification-success { border-left-color: #28a745; }
-            .notification-error { border-left-color: #D52B1E; }
-            .notification-info { border-left-color: #2A5C9E; }
-            .notification-icon { font-size: 20px; }
-            .notification-content { flex: 1; color: #333; }
-            .notification-close {
-                background: none;
-                border: none;
-                font-size: 20px;
-                cursor: pointer;
-                color: #999;
-                padding: 0 5px;
-            }
-            .notification-close:hover { color: #333; }
-            .notification.show { transform: translateX(0); }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 10);
-    
-    const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.addEventListener('click', () => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    });
-    
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
-        }
-    }, 3000);
-}
-
-// ========== РЕГИСТРАЦИЯ ==========
-function register(fio, login, email, password, confirmPass) {
-    if (!/^[а-яА-ЯёЁ\s\-]+$/.test(fio)) return 'ФИО только русские буквы';
-    if (users.find(u => u.login === login)) return 'Логин уже занят';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Некорректный email';
-    if (password !== confirmPass) return 'Пароли не совпадают';
-    if (password.length < 3) return 'Пароль минимум 3 символа';
-    
-    users.push({id: Date.now(), fio, login, email, password, role: 'user'});
-    saveAll();
-    return 'ok';
-}
-
-// ========== ВХОД ==========
-function loginUser(login, password) {
-    let user = users.find(u => u.login === login && u.password === password);
-    if (user) { 
-        currentUser = user; 
-        saveAll(); 
-        return true; 
-    }
-    return false;
-}
-
-// ========== ВЫХОД ==========
-function logout() { 
-    currentUser = null; 
-    saveAll(); 
-    showNotification('Вы вышли из системы', 'info');
-    updateNavButtons();
-    location.href = 'index.html'; 
-}
-
-// ========== ОБНОВЛЕНИЕ КНОПОК В ШАПКЕ ==========
-function updateNavButtons() {
-    const mainNav = document.querySelector('.main-nav');
-    const mobileNav = document.querySelector('#mobileNav');
-    
-    if (!mainNav) return;
-    
-    let authLink = mainNav.querySelector('#auth-link');
-    let mobileAuthLink = mobileNav ? mobileNav.querySelector('#mobile-auth-link') : null;
-    
-    if (currentUser) {
-        if (authLink) {
-            authLink.textContent = 'Выйти';
-            authLink.href = '#';
-            authLink.removeEventListener('click', logout);
-            authLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                logout();
-            });
-        }
-        if (mobileAuthLink) {
-            mobileAuthLink.textContent = 'Выйти';
-            mobileAuthLink.href = '#';
-            mobileAuthLink.removeEventListener('click', logout);
-            mobileAuthLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                logout();
-            });
-        }
-    } else {
-        if (authLink) {
-            authLink.textContent = 'Зарегистрироваться';
-            authLink.href = 'register.html';
-        }
-        if (mobileAuthLink) {
-            mobileAuthLink.textContent = 'Зарегистрироваться';
-            mobileAuthLink.href = 'register.html';
-        }
-    }
-}
-
-// ========== ПРОВЕРКА ПРАВ ==========
-function canCreateRequests() {
-    return currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin');
-}
-
-// ========== СОЗДАТЬ ЗАЯВКУ ==========
-function createRequest(title, category, description) {
-    if (!canCreateRequests()) return false;
-    if (!currentUser) return false;
-    
-    requests.push({
-        id: Date.now(),
-        userId: currentUser.id,
-        userRole: currentUser.role,
-        title: title,
-        category: category,
-        description: description,
-        status: 'Новая',
-        date: new Date().toLocaleString('ru-RU'),
-        rejectReason: ''
-    });
-    saveAll();
-    return true;
-}
-
-// ========== ПОЛУЧИТЬ ЗАЯВКИ ПОЛЬЗОВАТЕЛЯ ==========
-function getUserRequests(filter = 'all') {
-    let userReqs = requests.filter(r => r.userId === currentUser?.id);
-    if (filter === 'all') return userReqs;
-    return userReqs.filter(r => r.status === filter);
-}
-
-// ========== УДАЛИТЬ ЗАЯВКУ ==========
-function deleteRequest(id) {
-    let req = requests.find(r => r.id === id);
-    if (req && req.userId === currentUser?.id && req.status === 'Новая') {
-        if (confirm('Удалить заявку?')) {
-            requests = requests.filter(r => r.id !== id);
-            saveAll();
-            showNotification('Заявка удалена', 'success');
-            return true;
-        }
-    }
-    return false;
-}
-
-// ========== АДМИН: СМЕНИТЬ СТАТУС ==========
-function changeStatus(id, newStatus, reason = '') {
-    if (currentUser?.role !== 'admin') return false;
-    let req = requests.find(r => r.id === id);
-    if (req && req.status === 'Новая') {
-        req.status = newStatus;
-        if (newStatus === 'Отклонена') req.rejectReason = reason;
-        saveAll();
-        showNotification(`Заявка ${newStatus === 'Решена' ? 'отмечена как решенная' : 'отклонена'}`, 'success');
-        return true;
-    }
-    return false;
-}
-
-// ========== ПОЛУЧИТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ ==========
-function getAllUsers() {
-    return users;
-}
-
-// ========== СЧЕТЧИК ПОСЕЩЕНИЙ ==========
-function initCounter() {
-    let counter = localStorage.getItem('visitorCounter');
-    if (!counter) {
-        counter = 1250;
-    } else {
-        counter = parseInt(counter) + 1;
-    }
-    localStorage.setItem('visitorCounter', counter);
-    const counterSpan = document.getElementById('counter');
-    if (counterSpan) {
-        counterSpan.textContent = counter;
-    }
-}
-
-// ========== БУРГЕР-МЕНЮ ==========
-function initBurgerMenu() {
-    const burgerBtn = document.getElementById('burgerBtn');
-    const mobileNav = document.getElementById('mobileNav');
-    const overlay = document.getElementById('overlay');
-    
-    if (!burgerBtn || !mobileNav || !overlay) return;
-    
-    function closeMenu() {
-        mobileNav.classList.remove('open');
-        overlay.classList.remove('active');
-        burgerBtn.classList.remove('open');
-    }
-    
-    function openMenu() {
-        mobileNav.classList.add('open');
-        overlay.classList.add('active');
-        burgerBtn.classList.add('open');
-    }
-    
-    burgerBtn.addEventListener('click', () => {
-        if (mobileNav.classList.contains('open')) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
-    });
-    
-    overlay.addEventListener('click', closeMenu);
-    
-    mobileNav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', closeMenu);
-    });
-}
-
-// ========== ЗАГРУЗКА ЗАЯВОК (ТАБЛИЦА + КАРТОЧКИ) ==========
-let currentFilter = 'all';
-
-function loadRequestsTable() {
-    let reqs = getUserRequests(currentFilter);
-    let tbody = document.getElementById('requests-table');
-    let cardsContainer = document.getElementById('requests-cards');
-    
-    if (tbody) {
-        let html = '';
-        reqs.forEach(r => {
-            let statusColor = r.status === 'Новая' ? '#F9A826' : (r.status === 'Решена' ? '#2A5C9E' : '#D52B1E');
-            let statusText = r.status === 'Новая' ? '🟡 Новая' : (r.status === 'Решена' ? '✅ Решена' : '❌ Отклонена');
-            html += `<tr>
-                <td>${escapeHtml(r.date)}</td>
-                <td><strong>${escapeHtml(r.title)}</strong></td>
-                <td>${escapeHtml(r.category)}</td>
-                <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
-                <td>
-                    ${r.status === 'Новая' ? `<button class="danger delete-req-btn" data-id="${r.id}">🗑 Удалить</button>` : (r.status === 'Отклонена' ? `<span title="${escapeHtml(r.rejectReason || '')}" style="font-size:12px; color:#999;">❓ ${escapeHtml(r.rejectReason || 'нет причины')}</span>` : '—')}
-                </td>
-            </tr>`;
-        });
-        
-        if (reqs.length === 0) {
-            html = '<tr><td colspan="5" style="text-align: center; padding: 40px;">📭 Нет заявок</td></tr>';
-        }
-        
-        tbody.innerHTML = html;
-    }
-    
-    if (cardsContainer) {
-        let cardsHtml = '';
-        reqs.forEach(r => {
-            let cardClass = r.status === 'Новая' ? 'request-card-new' : (r.status === 'Решена' ? 'request-card-resolved' : 'request-card-rejected');
-            let statusClass = r.status === 'Новая' ? 'status-new' : (r.status === 'Решена' ? 'status-resolved' : 'status-rejected');
-            let statusText = r.status === 'Новая' ? '🟡 Новая' : (r.status === 'Решена' ? '✅ Решена' : '❌ Отклонена');
-            
-            cardsHtml += `
-                <div class="request-card ${cardClass}">
-                    <div class="request-card-header">
-                        <div class="request-card-title">${escapeHtml(r.title)}</div>
-                        <div class="request-card-status ${statusClass}">${statusText}</div>
-                    </div>
-                    <div class="request-card-date">📅 ${escapeHtml(r.date)}</div>
-                    <div class="request-card-category"><span>📁 ${escapeHtml(r.category)}</span></div>
-                    ${r.status === 'Отклонена' && r.rejectReason ? `<div class="request-card-reason">❌ Причина: ${escapeHtml(r.rejectReason)}</div>` : ''}
-                    <div class="request-card-actions">
-                        ${r.status === 'Новая' ? `<button class="danger delete-req-card-btn" data-id="${r.id}">🗑 Удалить</button>` : ''}
-                    </div>
-                </div>
-            `;
-        });
-        
-        if (reqs.length === 0) {
-            cardsHtml = '<div style="text-align: center; padding: 40px; background: white; border-radius: 16px;">📭 Нет заявок</div>';
-        }
-        
-        cardsContainer.innerHTML = cardsHtml;
-        
-        document.querySelectorAll('.delete-req-card-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                let id = parseInt(this.dataset.id);
-                if (deleteRequest(id)) loadRequestsTable();
-            });
-        });
-    }
-    
-    document.querySelectorAll('.delete-req-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            let id = parseInt(this.dataset.id);
-            if (deleteRequest(id)) loadRequestsTable();
-        });
-    });
-}
-
-// ========== ИНИЦИАЛИЗАЦИЯ СТРАНИЦ ==========
-document.addEventListener('DOMContentLoaded', function() {
-    let path = window.location.pathname;
-    
-    updateNavButtons();
-    initBurgerMenu();
-    
-    if (path.includes('index.html') || path === '/' || path.endsWith('/')) {
-        initCounter();
-        
-        // ========== НОВОСТИ С ОТКРЫТИЕМ ПРИ НАЖАТИИ ==========
-        const newsDatabase = {
-            1: {
-                title: 'Зимние каникулы',
-                date: '01.01.2026',
-                fullDescription: 'Уважаемые ученики и родители! Зимние каникулы продлятся с 29 декабря по 12 января. Желаем всем отлично отдохнуть, набраться сил и встретить Новый год с хорошим настроением! Занятия в школе возобновятся 13 января. Берегите себя и соблюдайте правила безопасности во время каникул.',
-                imageSrc: 'news/news1.jpg'
-            },
-            2: {
-                title: 'Родительское собрание',
-                date: '02.01.2026',
-                fullDescription: 'Приглашаем всех родителей на общешкольное родительское собрание, которое состоится 15 января в 18:00 в актовом зале. Повестка дня: итоги первого полугодия, организация учебного процесса во втором полугодии, профилактика детского травматизма, ответы на вопросы. Явка обязательна!',
-                imageSrc: 'news/news2.jpg'
-            },
-            3: {
-                title: 'Олимпиада по математике',
-                date: '03.01.2026',
-                fullDescription: 'Школьный этап Всероссийской олимпиады по математике состоится 20 января. Приглашаются ученики 5-11 классов. Олимпиада пройдет в два тура: теоретический и практический. Победители будут представлять нашу гимназию на муниципальном этапе. Желаем успехов! Регистрация участников до 15 января у учителей математики.',
-                imageSrc: 'news/news3.jpg'
-            },
-            4: {
-                title: 'Ремонт в столовой',
-                date: '04.01.2026',
-                fullDescription: 'Рады сообщить, что в школьной столовой завершен долгожданный ремонт! Обновлено освещение, установлена новая мебель, улучшена вентиляция. Меню стало еще разнообразнее и полезнее. Приглашаем всех оценить обновленную столовую после каникул! Администрация благодарит родителей за помощь в организации ремонта.',
-                imageSrc: 'news/news4.jpg'
-            }
-        };
-        
-        const modal = document.getElementById('newsModal');
-        if (modal) {
-            const modalImage = document.getElementById('modalImage');
-            const modalDate = document.getElementById('modalDate');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalDescription = document.getElementById('modalDescription');
-            const closeModalBtn = document.getElementById('closeModalBtn');
-            
-            function openNewsModal(newsId) {
-                const news = newsDatabase[newsId];
-                if (!news) return;
-                
-                modalImage.src = news.imageSrc;
-                modalImage.alt = news.title;
-                modalImage.onerror = function() {
-                    this.src = 'https://placehold.co/400x200?text=Нет+фото';
-                };
-                modalDate.textContent = `📅 ${news.date}`;
-                modalTitle.textContent = news.title;
-                modalDescription.textContent = news.fullDescription;
-                
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            function closeNewsModal() {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            
-            const newsCards = document.querySelectorAll('.news-card');
-            newsCards.forEach(card => {
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', function(e) {
-                    if (e.target.tagName === 'A') return;
-                    const newsId = this.dataset.newsId;
-                    if (newsId) openNewsModal(newsId);
-                });
-            });
-            
-            if (closeModalBtn) closeModalBtn.addEventListener('click', closeNewsModal);
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeNewsModal();
-            });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal.classList.contains('active')) closeNewsModal();
-            });
-        }
-    }
-    
-    if (path.includes('login.html')) {
-        let loginBtn = document.getElementById('login-btn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', function() {
-                let login = document.getElementById('login').value;
-                let pass = document.getElementById('password').value;
-                let errorDiv = document.getElementById('error');
-                
-                if (loginUser(login, pass)) {
-                    showNotification(`Добро пожаловать, ${currentUser.fio}!`, 'success');
-                    updateNavButtons();
-                    if (currentUser.role === 'admin') {
-                        location.href = 'admin.html';
-                    } else {
-                        location.href = 'my_requests.html';
-                    }
-                } else {
-                    errorDiv.textContent = 'Неверный логин или пароль';
-                    showNotification('Неверный логин или пароль', 'error');
-                }
-            });
-        }
-    }
-    
-    if (path.includes('register.html')) {
-        let registerBtn = document.getElementById('register-btn');
-        if (registerBtn) {
-            registerBtn.addEventListener('click', function() {
-                let fio = document.getElementById('fio').value;
-                let login = document.getElementById('login').value;
-                let email = document.getElementById('email').value;
-                let pass = document.getElementById('pass').value;
-                let pass2 = document.getElementById('pass2').value;
-                let agree = document.getElementById('agree').checked;
-                let errorDiv = document.getElementById('error');
-                
-                if (!agree) {
-                    errorDiv.textContent = 'Необходимо согласие на обработку данных';
-                    showNotification('Необходимо согласие на обработку данных', 'error');
-                    return;
-                }
-                
-                let result = register(fio, login, email, pass, pass2);
-                if (result === 'ok') {
-                    showNotification('Регистрация успешна! Теперь можно войти.', 'success');
-                    setTimeout(() => { location.href = 'login.html'; }, 1500);
-                } else {
-                    errorDiv.textContent = result;
-                    showNotification(result, 'error');
-                }
-            });
-        }
-    }
-    
-    if (path.includes('create_request.html')) {
-        if (!currentUser) {
-            location.href = 'login.html';
-        }
-        
-        let categorySelect = document.getElementById('category');
-        if (categorySelect) {
-            categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
-            categories.forEach(c => {
-                let option = document.createElement('option');
-                option.value = c;
-                option.textContent = c;
-                categorySelect.appendChild(option);
-            });
-        }
-        
-        if (!canCreateRequests()) {
-            let accessError = document.getElementById('access-error');
-            if (accessError) accessError.classList.remove('hidden');
-            let titleInput = document.getElementById('title');
-            let categoryInput = document.getElementById('category');
-            let descInput = document.getElementById('description');
-            let submitBtn = document.getElementById('submit-btn');
-            if (titleInput) titleInput.disabled = true;
-            if (categoryInput) categoryInput.disabled = true;
-            if (descInput) descInput.disabled = true;
-            if (submitBtn) submitBtn.disabled = true;
-        }
-        
-        let submitBtn = document.getElementById('submit-btn');
-        if (submitBtn) {
-            submitBtn.addEventListener('click', function() {
-                if (!canCreateRequests()) {
-                    showNotification('У вас нет прав для создания заявки', 'error');
-                    return;
-                }
-                
-                let title = document.getElementById('title').value.trim();
-                let category = document.getElementById('category').value;
-                let description = document.getElementById('description').value.trim();
-                
-                if (!title || !description) {
-                    showNotification('Заполните все поля', 'error');
-                    return;
-                }
-                
-                if (!category) {
-                    showNotification('Выберите категорию', 'error');
-                    return;
-                }
-                
-                if (createRequest(title, category, description)) {
-                    showNotification('Заявка успешно создана!', 'success');
-                    setTimeout(() => { location.href = 'my_requests.html'; }, 1000);
-                } else {
-                    showNotification('Ошибка при создании заявки', 'error');
-                }
-            });
-        }
-    }
-    
-    if (path.includes('my_requests.html')) {
-        if (!currentUser) {
-            location.href = 'login.html';
-            return;
-        }
-        
-        let teacherInfo = document.getElementById('teacher-info');
-        let userInfo = document.getElementById('user-info');
-        let adminInfo = document.getElementById('admin-info');
-        let newRequestBtn = document.getElementById('new-request-btn');
-        
-        if (currentUser.role === 'teacher') {
-            if (teacherInfo) teacherInfo.classList.remove('hidden');
-            if (newRequestBtn) newRequestBtn.style.display = 'inline-block';
-        } else if (currentUser.role === 'admin') {
-            if (adminInfo) adminInfo.classList.remove('hidden');
-            if (newRequestBtn) newRequestBtn.style.display = 'inline-block';
-        } else {
-            if (userInfo) userInfo.classList.remove('hidden');
-            if (newRequestBtn) newRequestBtn.style.display = 'none';
-        }
-        
-        if (newRequestBtn) {
-            newRequestBtn.addEventListener('click', function() {
-                location.href = 'create_request.html';
-            });
-        }
-        
-        function filterRequests(filter, btnElement) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
-            loadRequestsTable();
-        }
-        
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                let filter = this.dataset.filter;
-                filterRequests(filter, this);
-            });
-        });
-        
-        loadRequestsTable();
-    }
-    
-    if (path.includes('admin.html')) {
-        if (!currentUser || currentUser.role !== 'admin') {
-            location.href = 'index.html';
-            return;
-        }
-        
-        function loadUsersTable() {
-            let tbody = document.getElementById('users-table');
-            if (!tbody) return;
-            
-            let html = '';
-            getAllUsers().forEach(u => {
-                let roleText = u.role === 'admin' ? '👑 Администратор' : (u.role === 'teacher' ? '👨‍🏫 Учитель' : '👤 Пользователь');
-                let btn = '';
-                if (u.role === 'admin') {
-                    btn = '<span style="color: #999;">—</span>';
-                } else if (u.role === 'teacher') {
-                    btn = `<button class="remove-teacher-btn danger" data-id="${u.id}">🔽 Убрать права</button>`;
-                } else {
-                    btn = `<button class="make-teacher-btn" data-id="${u.id}">⬆ Назначить учителем</button>`;
-                }
-                html += `<tr>
-                    <td>${escapeHtml(u.fio)}</td>
-                    <td>${escapeHtml(u.login)}</td>
-                    <td>${escapeHtml(u.email)}</td>
-                    <td>${roleText}</td>
-                    <td>${btn}</td>
-                </tr>`;
-            });
-            tbody.innerHTML = html;
-            
-            document.querySelectorAll('.make-teacher-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let userId = parseInt(this.dataset.id);
-                    let user = users.find(u => u.id === userId);
-                    if (user && user.role === 'user') {
-                        if (confirm(`Назначить "${user.fio}" учителем?`)) {
-                            user.role = 'teacher';
-                            saveAll();
-                            loadUsersTable();
-                            showNotification(`${user.fio} теперь учитель!`, 'success');
-                        }
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.remove-teacher-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let userId = parseInt(this.dataset.id);
-                    let user = users.find(u => u.id === userId);
-                    if (user && user.role === 'teacher') {
-                        if (confirm(`Убрать права учителя у "${user.fio}"?`)) {
-                            user.role = 'user';
-                            saveAll();
-                            loadUsersTable();
-                            showNotification(`У ${user.fio} убраны права учителя`, 'info');
-                        }
-                    }
-                });
-            });
-        }
-        
-        function loadAllRequestsTable() {
-            let tbody = document.getElementById('requests-table');
-            if (!tbody) return;
-            
-            let html = '';
-            [...requests].reverse().forEach(r => {
-                let user = users.find(u => u.id === r.userId);
-                let username = user ? user.fio : 'Неизвестно';
-                let userRole = user ? (user.role === 'teacher' ? '👨‍🏫 Учитель' : (user.role === 'admin' ? '👑 Админ' : '👤 Пользователь')) : 'Неизвестно';
-                let statusColor = r.status === 'Новая' ? '#F9A826' : (r.status === 'Решена' ? '#2A5C9E' : '#D52B1E');
-                let statusText = r.status === 'Новая' ? '🟡 Новая' : (r.status === 'Решена' ? '✅ Решена' : '❌ Отклонена');
-                
-                html += `<tr>
-                    <td>${escapeHtml(r.date)}</td>
-                    <td>${escapeHtml(username)}</td>
-                    <td>${userRole}</td>
-                    <td><strong>${escapeHtml(r.title)}</strong></td>
-                    <td>${escapeHtml(r.category)}</td>
-                    <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
-                    <td>
-                        ${r.status === 'Новая' ? 
-                            `<button class="solve-req-btn" data-id="${r.id}">✅ Решена</button>
-                             <button class="reject-req-btn danger" data-id="${r.id}">❌ Отклонить</button>` : 
-                            (r.status === 'Отклонена' ? `<span title="${escapeHtml(r.rejectReason || '')}" style="font-size:12px; color:#999;">📝 ${escapeHtml(r.rejectReason || 'нет причины')}</span>` : '—')}
-                    </td>
-                </tr>`;
-            });
-            
-            if (requests.length === 0) {
-                html = '<tr><td colspan="7" style="text-align: center; padding: 40px;">📭 Нет заявок</td></tr>';
-            }
-            
-            tbody.innerHTML = html;
-            
-            document.querySelectorAll('.solve-req-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let id = parseInt(this.dataset.id);
-                    if (changeStatus(id, 'Решена')) {
-                        loadAllRequestsTable();
-                        loadUsersTable();
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.reject-req-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let id = parseInt(this.dataset.id);
-                    let reason = prompt('📝 Укажите причину отклонения:');
-                    if (reason && reason.trim() !== '') {
-                        if (changeStatus(id, 'Отклонена', reason)) {
-                            loadAllRequestsTable();
-                            loadUsersTable();
-                        }
-                    } else if (reason !== null) {
-                        showNotification('Необходимо указать причину отклонения', 'error');
-                    }
-                });
-            });
-        }
-        
-        function loadCategoriesList() {
-            let list = document.getElementById('categories-list');
-            if (!list) return;
-            
-            let html = '';
-            categories.forEach(c => {
-                let hasRequests = requests.some(r => r.category === c);
-                html += `<li>
-                    <span>📁 ${escapeHtml(c)}</span>
-                    ${!hasRequests ? `<button class="delete-cat-btn danger" data-cat="${c}">🗑 Удалить</button>` : '<span style="color: #999;">(есть заявки)</span>'}
-                </li>`;
-            });
-            list.innerHTML = html;
-            
-            document.querySelectorAll('.delete-cat-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let cat = this.dataset.cat;
-                    if (confirm(`Удалить категорию "${cat}"?`)) {
-                        categories = categories.filter(c => c !== cat);
-                        saveAll();
-                        loadCategoriesList();
-                        showNotification(`Категория "${cat}" удалена`, 'success');
-                    }
-                });
-            });
-        }
-        
-        let addBtn = document.getElementById('add-category-btn');
-        if (addBtn) {
-            addBtn.addEventListener('click', function() {
-                let newCat = document.getElementById('new-category').value.trim();
-                if (newCat && !categories.includes(newCat)) {
-                    categories.push(newCat);
-                    saveAll();
-                    loadCategoriesList();
-                    document.getElementById('new-category').value = '';
-                    showNotification(`Категория "${newCat}" добавлена`, 'success');
-                } else if (categories.includes(newCat)) {
-                    showNotification('Такая категория уже существует', 'error');
-                } else {
-                    showNotification('Введите название категории', 'error');
-                }
-            });
-        }
-        
-        loadUsersTable();
-        loadAllRequestsTable();
-        loadCategoriesList();
-    }
-});

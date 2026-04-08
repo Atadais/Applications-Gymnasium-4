@@ -338,24 +338,6 @@ a:hover { color: var(--accent-dark); }
 }
 
 /* Счетчик */
-.counter-section { margin: 2rem 0; }
-
-.counter-card {
-    background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
-    text-align: center;
-    max-width: 300px;
-    margin: 0 auto;
-    border: 2px solid var(--accent-color);
-}
-
-.counter-number {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--accent-color);
-    font-family: 'Montserrat', sans-serif;
-}
 
 /* Новости */
 .news-section { margin-bottom: 3rem; }

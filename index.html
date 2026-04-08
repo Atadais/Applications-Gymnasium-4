@@ -24,21 +24,19 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 
-                <!-- Десктопное меню - будет заполняться через JS -->
                 <nav class="main-nav" id="desktopNav"></nav>
                 
                 <div class="user-info" id="userInfo" style="display: none;">
                     <div class="user-avatar" id="userAvatar">А</div>
                     <div>
                         <div id="userName">Пользователь</div>
-                        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">Выйти</a>
+                        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); display: block;">Выйти</a>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Мобильное меню -->
     <div class="mobile-nav" id="mobileNav"></div>
     <div class="overlay" id="mobileOverlay"></div>
 
@@ -53,6 +51,14 @@
                 <div class="hero-buttons" id="heroButtons">
                     <a href="login.html" class="btn btn-accent">Войти в систему</a>
                     <a href="register.html" class="btn">Зарегистрироваться</a>
+                </div>
+            </section>
+
+            <section class="counter-section animate">
+                <div class="counter-card">
+                    <h3 class="counter-title">👥 Посетителей онлайн</h3>
+                    <div class="counter-number" id="visitor-counter">128</div>
+                    <p class="counter-subtitle">Сейчас на сайте</p>
                 </div>
             </section>
 
@@ -90,7 +96,6 @@
         </div>
     </main>
 
-    <!-- Модальное окно новостей -->
     <div id="newsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">

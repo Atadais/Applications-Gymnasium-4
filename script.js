@@ -26,7 +26,8 @@ function loadData() {
     if (savedUsers) users = JSON.parse(savedUsers);
     else {
         users = [
-            { id: 1, fullName: 'Администратор', login: 'admin', password: 'admin123', email: 'admin@gym4.ru', role: 'admin', regDate: '01.01.2025' }
+            { id: 1, fullName: 'Администратор', login: 'admin', password: 'admin123', email: 'admin@gym4.ru', role: 'admin', regDate: '01.01.2025' },
+            { id: 2, fullName: 'Иванова Мария Петровна', login: 'teacher', password: 'teacher123', email: 'teacher@gym4.ru', role: 'teacher', regDate: '02.01.2025' }
         ];
         localStorage.setItem('users', JSON.stringify(users));
     }
@@ -69,6 +70,7 @@ function initAuth() {
         
         if (heroButtons) heroButtons.style.display = 'none';
         
+        // Кнопка выхода теперь есть для всех пользователей
         if (logoutLink) {
             logoutLink.onclick = (e) => {
                 e.preventDefault();
@@ -125,6 +127,7 @@ function updateNavigation() {
             `;
             if (footerRequestsLink) footerRequestsLink.href = 'my_requests.html';
         } else {
+            // Обычный пользователь (user) - ожидает подтверждения
             navHtml = `
                 <ul>
                     <li><a href="index.html" ${isActive('index.html') ? 'class="active"' : ''}><i class="fas fa-home"></i> Главная</a></li>
@@ -167,6 +170,7 @@ function updateNavigation() {
     desktopNav.innerHTML = navHtml;
     if (mobileNav) mobileNav.innerHTML = mobileHtml;
     
+    // Обработка выхода в мобильном меню
     const mobileLogout = document.getElementById('mobileLogoutLink');
     if (mobileLogout) {
         mobileLogout.onclick = (e) => {
@@ -233,7 +237,6 @@ function loadNews() {
     const newsContainer = document.getElementById('newsGrid');
     if (!newsContainer) return;
     
-    // НОВОСТИ С ПОДРОБНЫМИ ОПИСАНИЯМИ
     const newsData = [
         { 
             id: 1, 
@@ -291,7 +294,6 @@ function showNewsModal(news) {
     
     document.getElementById('modalTitle').textContent = news.title;
     document.getElementById('modalDate').textContent = `📅 ${news.date}`;
-    // Преобразуем переносы строк в <br> для красивого отображения
     document.getElementById('modalDescription').innerHTML = news.fullText.replace(/\n/g, '<br>');
     
     modal.classList.add('active');
@@ -305,7 +307,6 @@ function showNewsModal(news) {
     modal.querySelector('.modal-close').onclick = closeModal;
     modal.onclick = (e) => { if (e.target === modal) closeModal(); };
     
-    // Закрытие по ESC
     document.onkeydown = (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
             closeModal();
@@ -703,8 +704,8 @@ function loadUsersList() {
                             🔄 Отозвать
                         </button>
                     ` : ''}
-                 </td>
-                <td>${userRequests}</td>
+                  </div>
+                <td>${userRequests}</div>
             </tr>
         `;
     }).join('');

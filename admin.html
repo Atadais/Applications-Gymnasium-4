@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Админ-панель - Гимназия №4</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,8 +13,7 @@
             <a href="index.html">Главная</a>
             <a href="about.html">О нас</a>
             <a href="admin.html">Админ-панель</a>
-            <a href="register.html">Регистрация</a>
-            <a href="#" id="logout-link">Выйти</a>
+            <a href="register.html" id="auth-link">Зарегистрироваться</a>
         </nav>
         <button class="burger-btn" id="burgerBtn">
             <span></span><span></span><span></span>
@@ -25,36 +24,40 @@
         
         <h2>Управление правами учителей</h2>
         <div class="admin-section">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ФИО</th>
-                        <th>Логин</th>
-                        <th>Email</th>
-                        <th>Роль</th>
-                        <th>Действие</th>
-                    </tr>
-                </thead>
-                <tbody id="users-table"></tbody>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ФИО</th>
+                            <th>Логин</th>
+                            <th>Email</th>
+                            <th>Роль</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table"></tbody>
+                </table>
+            </div>
         </div>
         
         <h2>Все заявки</h2>
         <div class="admin-section">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Пользователь</th>
-                        <th>Роль</th>
-                        <th>Название</th>
-                        <th>Категория</th>
-                        <th>Статус</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="requests-table"></tbody>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Пользователь</th>
+                            <th>Роль</th>
+                            <th>Название</th>
+                            <th>Категория</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requests-table"></tbody>
+                </table>
+            </div>
         </div>
         
         <h2>Управление категориями</h2>
@@ -96,7 +99,7 @@
         <a href="index.html">Главная</a>
         <a href="about.html">О нас</a>
         <a href="admin.html">Админ-панель</a>
-        <a href="register.html">Регистрация</a>
+        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
     </div>
     <div class="overlay" id="overlay"></div>
     <script src="script.js"></script>

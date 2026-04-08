@@ -70,18 +70,22 @@ function initAuth() {
         
         if (heroButtons) heroButtons.style.display = 'none';
         
-        // Кнопка выхода теперь есть для всех пользователей
+        // КНОПКА ВЫХОДА - для всех авторизованных пользователей
         if (logoutLink) {
             logoutLink.onclick = (e) => {
                 e.preventDefault();
                 logout();
             };
+            logoutLink.style.display = 'block';
         }
     } else {
         if (loginLink) loginLink.style.display = 'block';
         if (registerLink) registerLink.style.display = 'block';
         if (userInfo) userInfo.style.display = 'none';
         if (heroButtons) heroButtons.style.display = 'flex';
+        
+        // Скрываем кнопку выхода если нет пользователя
+        if (logoutLink) logoutLink.style.display = 'none';
     }
 }
 
@@ -170,7 +174,6 @@ function updateNavigation() {
     desktopNav.innerHTML = navHtml;
     if (mobileNav) mobileNav.innerHTML = mobileHtml;
     
-    // Обработка выхода в мобильном меню
     const mobileLogout = document.getElementById('mobileLogoutLink');
     if (mobileLogout) {
         mobileLogout.onclick = (e) => {
@@ -632,7 +635,7 @@ function loadAllRequests() {
                         <button class="btn btn-success btn-sm" onclick="solveRequest(${req.id})">✅ Решить</button>
                         <button class="btn btn-danger btn-sm" onclick="openRejectModal(${req.id})">❌ Отклонить</button>
                     ` : ''}
-                 </td>
+                  </div>
             </tr>
         `;
     }).join('');

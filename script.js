@@ -124,7 +124,49 @@ function logout() {
     currentUser = null; 
     saveAll(); 
     showNotification('Вы вышли из системы', 'info');
+    updateNavButtons();
     location.href = 'index.html'; 
+}
+
+// ========== ОБНОВЛЕНИЕ КНОПОК В ШАПКЕ ==========
+function updateNavButtons() {
+    const mainNav = document.querySelector('.main-nav');
+    const mobileNav = document.querySelector('#mobileNav');
+    
+    if (!mainNav) return;
+    
+    let authLink = mainNav.querySelector('#auth-link');
+    let mobileAuthLink = mobileNav ? mobileNav.querySelector('#mobile-auth-link') : null;
+    
+    if (currentUser) {
+        if (authLink) {
+            authLink.textContent = 'Выйти';
+            authLink.href = '#';
+            authLink.removeEventListener('click', logout);
+            authLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }
+        if (mobileAuthLink) {
+            mobileAuthLink.textContent = 'Выйти';
+            mobileAuthLink.href = '#';
+            mobileAuthLink.removeEventListener('click', logout);
+            mobileAuthLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }
+    } else {
+        if (authLink) {
+            authLink.textContent = 'Зарегистрироваться';
+            authLink.href = 'register.html';
+        }
+        if (mobileAuthLink) {
+            mobileAuthLink.textContent = 'Зарегистрироваться';
+            mobileAuthLink.href = 'register.html';
+        }
+    }
 }
 
 // ========== ПРОВЕРКА ПРАВ ==========
@@ -250,7 +292,6 @@ function loadRequestsTable() {
     let tbody = document.getElementById('requests-table');
     let cardsContainer = document.getElementById('requests-cards');
     
-    // Отрисовка таблицы для десктопа
     if (tbody) {
         let html = '';
         reqs.forEach(r => {
@@ -274,7 +315,6 @@ function loadRequestsTable() {
         tbody.innerHTML = html;
     }
     
-    // Отрисовка карточек для телефона
     if (cardsContainer) {
         let cardsHtml = '';
         reqs.forEach(r => {
@@ -304,7 +344,6 @@ function loadRequestsTable() {
         
         cardsContainer.innerHTML = cardsHtml;
         
-        // Добавляем обработчики для кнопок удаления в карточках
         document.querySelectorAll('.delete-req-card-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 let id = parseInt(this.dataset.id);
@@ -313,7 +352,6 @@ function loadRequestsTable() {
         });
     }
     
-    // Обработчики для кнопок удаления в таблице
     document.querySelectorAll('.delete-req-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             let id = parseInt(this.dataset.id);
@@ -326,15 +364,90 @@ function loadRequestsTable() {
 document.addEventListener('DOMContentLoaded', function() {
     let path = window.location.pathname;
     
-    // Инициализация бургер-меню
+    updateNavButtons();
     initBurgerMenu();
     
-    // Счетчик посещений только на главной
     if (path.includes('index.html') || path === '/' || path.endsWith('/')) {
         initCounter();
+        
+        // ========== НОВОСТИ С ОТКРЫТИЕМ ПРИ НАЖАТИИ ==========
+        const newsDatabase = {
+            1: {
+                title: 'Зимние каникулы',
+                date: '01.01.2026',
+                fullDescription: 'Уважаемые ученики и родители! Зимние каникулы продлятся с 29 декабря по 12 января. Желаем всем отлично отдохнуть, набраться сил и встретить Новый год с хорошим настроением! Занятия в школе возобновятся 13 января. Берегите себя и соблюдайте правила безопасности во время каникул.',
+                imageSrc: 'news/news1.jpg'
+            },
+            2: {
+                title: 'Родительское собрание',
+                date: '02.01.2026',
+                fullDescription: 'Приглашаем всех родителей на общешкольное родительское собрание, которое состоится 15 января в 18:00 в актовом зале. Повестка дня: итоги первого полугодия, организация учебного процесса во втором полугодии, профилактика детского травматизма, ответы на вопросы. Явка обязательна!',
+                imageSrc: 'news/news2.jpg'
+            },
+            3: {
+                title: 'Олимпиада по математике',
+                date: '03.01.2026',
+                fullDescription: 'Школьный этап Всероссийской олимпиады по математике состоится 20 января. Приглашаются ученики 5-11 классов. Олимпиада пройдет в два тура: теоретический и практический. Победители будут представлять нашу гимназию на муниципальном этапе. Желаем успехов! Регистрация участников до 15 января у учителей математики.',
+                imageSrc: 'news/news3.jpg'
+            },
+            4: {
+                title: 'Ремонт в столовой',
+                date: '04.01.2026',
+                fullDescription: 'Рады сообщить, что в школьной столовой завершен долгожданный ремонт! Обновлено освещение, установлена новая мебель, улучшена вентиляция. Меню стало еще разнообразнее и полезнее. Приглашаем всех оценить обновленную столовую после каникул! Администрация благодарит родителей за помощь в организации ремонта.',
+                imageSrc: 'news/news4.jpg'
+            }
+        };
+        
+        const modal = document.getElementById('newsModal');
+        if (modal) {
+            const modalImage = document.getElementById('modalImage');
+            const modalDate = document.getElementById('modalDate');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            
+            function openNewsModal(newsId) {
+                const news = newsDatabase[newsId];
+                if (!news) return;
+                
+                modalImage.src = news.imageSrc;
+                modalImage.alt = news.title;
+                modalImage.onerror = function() {
+                    this.src = 'https://placehold.co/400x200?text=Нет+фото';
+                };
+                modalDate.textContent = `📅 ${news.date}`;
+                modalTitle.textContent = news.title;
+                modalDescription.textContent = news.fullDescription;
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeNewsModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            const newsCards = document.querySelectorAll('.news-card');
+            newsCards.forEach(card => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function(e) {
+                    if (e.target.tagName === 'A') return;
+                    const newsId = this.dataset.newsId;
+                    if (newsId) openNewsModal(newsId);
+                });
+            });
+            
+            if (closeModalBtn) closeModalBtn.addEventListener('click', closeNewsModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeNewsModal();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('active')) closeNewsModal();
+            });
+        }
     }
     
-    // Логин
     if (path.includes('login.html')) {
         let loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
@@ -345,6 +458,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (loginUser(login, pass)) {
                     showNotification(`Добро пожаловать, ${currentUser.fio}!`, 'success');
+                    updateNavButtons();
                     if (currentUser.role === 'admin') {
                         location.href = 'admin.html';
                     } else {
@@ -358,7 +472,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Регистрация
     if (path.includes('register.html')) {
         let registerBtn = document.getElementById('register-btn');
         if (registerBtn) {
@@ -389,7 +502,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Создание заявки
     if (path.includes('create_request.html')) {
         if (!currentUser) {
             location.href = 'login.html';
@@ -451,7 +563,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Мои заявки
     if (path.includes('my_requests.html')) {
         if (!currentUser) {
             location.href = 'login.html';
@@ -497,7 +608,6 @@ document.addEventListener('DOMContentLoaded', function() {
         loadRequestsTable();
     }
     
-    // Админ-панель
     if (path.includes('admin.html')) {
         if (!currentUser || currentUser.role !== 'admin') {
             location.href = 'index.html';
@@ -668,15 +778,5 @@ document.addEventListener('DOMContentLoaded', function() {
         loadUsersTable();
         loadAllRequestsTable();
         loadCategoriesList();
-    }
-    
-    // Кнопка выхода
-    const logoutLink = document.getElementById('logout-link');
-    if (logoutLink && currentUser) {
-        logoutLink.classList.remove('hidden');
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            logout();
-        });
     }
 });

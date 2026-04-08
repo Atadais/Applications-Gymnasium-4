@@ -1,45 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Новая заявка - Гимназия №4</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гимназия №4 - Создание заявки</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav class="main-nav">
-            <a href="index.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="my_requests.html">Заявки</a>
-            <a href="register.html" id="auth-link">Зарегистрироваться</a>
-        </nav>
-        <button class="burger-btn" id="burgerBtn">
-            <span></span><span></span><span></span>
-        </button>
-    </header>
-    <main>
-        <div class="form-container">
-            <h2>Создать новую заявку</h2>
-            <div id="access-error" class="error-box hidden">
-                <p>⚠️ Только учителя могут создавать заявки!</p>
-                <p>Если вы учитель, обратитесь к администратору для назначения прав.</p>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <img src="logo/logo.png" alt="Логотип" class="logo-img" onerror="this.src='https://placehold.co/50x50?text=Г4'">
+                    <span>Гимназия №4</span>
+                </a>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="main-nav" id="desktopNav"></nav>
+                
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">А</div>
+                    <div>
+                        <div id="userName">Пользователь</div>
+                        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">Выйти</a>
+                    </div>
+                </div>
             </div>
-            <div id="error" class="error-text"></div>
-            
-            <input type="text" id="title" placeholder="Название заявки">
-            
-            <select id="category">
-                <option value="">Выберите категорию</option>
-            </select>
-            
-            <textarea id="description" placeholder="Описание проблемы" rows="5"></textarea>
-            
-            <button id="submit-btn">Отправить заявку</button>
-            <p><a href="my_requests.html">← Назад к моим заявкам</a></p>
+        </div>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav"></div>
+    <div class="overlay" id="mobileOverlay"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-with-sidebar">
+                <aside class="sidebar">
+                    <nav class="sidebar-nav">
+                        <a href="my_requests.html"><i class="fas fa-tasks"></i> Мои заявки</a>
+                        <a href="create_request.html" class="active"><i class="fas fa-plus-circle"></i> Создать заявку</a>
+                    </nav>
+                </aside>
+                
+                <div class="main-content-with-sidebar">
+                    <h1 class="page-title">Создание заявки</h1>
+                    
+                    <div class="form-container" style="max-width: 100%;">
+                        <form id="createRequestForm">
+                            <div class="form-group">
+                                <label for="requestTitle" class="form-label required">Название заявки</label>
+                                <input type="text" id="requestTitle" class="form-input" placeholder="Например: Сломался проектор в 204 кабинете" required>
+                                <div class="error-message" id="titleError">Введите название</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="requestCategory" class="form-label required">Категория</label>
+                                <select id="requestCategory" class="form-input" required>
+                                    <option value="">Выберите категорию</option>
+                                </select>
+                                <div class="error-message" id="categoryError">Выберите категорию</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="requestDescription" class="form-label required">Описание проблемы</label>
+                                <textarea id="requestDescription" class="form-textarea" rows="5" placeholder="Опишите подробно, что случилось, где, когда..." required></textarea>
+                                <div class="error-message" id="descriptionError">Введите описание</div>
+                            </div>
+                            
+                            <div class="form-actions" style="display: flex; gap: 1rem;">
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='my_requests.html'">Отмена</button>
+                                <button type="submit" class="btn btn-accent">Отправить заявку</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -58,20 +104,14 @@
                 <h3>Навигация</h3>
                 <p><a href="index.html">Главная</a></p>
                 <p><a href="about.html">О нас</a></p>
-                <p><a href="my_requests.html">Заявки</a></p>
+                <p><a href="#" id="footerRequestsLink">Заявки</a></p>
             </div>
         </div>
         <div class="footer-bottom">
             <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
         </div>
     </footer>
-    <div class="mobile-nav" id="mobileNav">
-        <a href="index.html">Главная</a>
-        <a href="about.html">О нас</a>
-        <a href="my_requests.html">Заявки</a>
-        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
-    </div>
-    <div class="overlay" id="overlay"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

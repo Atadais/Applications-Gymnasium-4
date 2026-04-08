@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация - Гимназия №4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Заявки - Гимназия №4</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,40 +13,54 @@
             <a href="index.html">Главная</a>
             <a href="about.html">О нас</a>
             <a href="my_requests.html">Заявки</a>
-            <a href="register.html">Регистрация</a>
+            <a href="register.html" id="auth-link">Зарегистрироваться</a>
         </nav>
         <button class="burger-btn" id="burgerBtn">
             <span></span><span></span><span></span>
         </button>
     </header>
     <main>
-        <div class="form-container">
-            <h2>Регистрация</h2>
-            <div id="error" class="error-text"></div>
-            
-            <input type="text" id="fio" placeholder="ФИО (только русские буквы)">
-            <input type="text" id="login" placeholder="Логин (латиница)">
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="pass" placeholder="Пароль">
-            <input type="password" id="pass2" placeholder="Повторите пароль">
-            
-            <label class="checkbox-label">
-                <input type="checkbox" id="agree"> Согласие на обработку данных
-            </label>
-            
-            <button id="register-btn">Зарегистрироваться</button>
-            <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
-            
-            <div class="register-note">
-                <p>⚠️ После регистрации вы будете обычным пользователем.<br>Для получения прав учителя обратитесь к администратору.</p>
-            </div>
-            
-            <div class="test-accounts">
-                <p>📌 Тестовые аккаунты:</p>
-                <p>👑 Админ: admin / admin</p>
-                <p>👨‍🏫 Учитель: ivanov / 123</p>
-                <p>👤 Пользователь: petrov / 123</p>
-            </div>
+        <h1>Мои заявки</h1>
+        
+        <div id="teacher-info" class="info-box teacher-info hidden">
+            <p>✅ Вы имеете права учителя — вы можете создавать и отправлять заявки.</p>
+        </div>
+        
+        <div id="user-info" class="info-box user-info hidden">
+            <p>⚠️ У вас нет прав учителя — вы не можете создавать заявки. Только просмотр.</p>
+            <p>Обратитесь к администратору для получения прав учителя.</p>
+        </div>
+        
+        <div id="admin-info" class="info-box admin-info hidden">
+            <p>👑 Вы администратор — вы можете управлять всеми заявками и правами пользователей.</p>
+        </div>
+        
+        <button id="new-request-btn" class="new-request-btn">+ Новая заявка</button>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Все</button>
+            <button class="filter-btn" data-filter="Новая">Новые</button>
+            <button class="filter-btn" data-filter="Решена">Решенные</button>
+            <button class="filter-btn" data-filter="Отклонена">Отклоненные</button>
+        </div>
+        
+        <!-- Контейнер для карточек (телефон) -->
+        <div class="requests-cards" id="requests-cards"></div>
+        
+        <!-- Таблица для десктопа -->
+        <div class="table-wrapper desktop-only">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>Статус</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody id="requests-table"></tbody>
+            </table>
         </div>
     </main>
     <footer>
@@ -78,7 +92,7 @@
         <a href="index.html">Главная</a>
         <a href="about.html">О нас</a>
         <a href="my_requests.html">Заявки</a>
-        <a href="register.html">Регистрация</a>
+        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
     </div>
     <div class="overlay" id="overlay"></div>
     <script src="script.js"></script>

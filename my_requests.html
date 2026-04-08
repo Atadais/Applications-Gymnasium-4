@@ -30,7 +30,7 @@
                     <div class="user-avatar" id="userAvatar">А</div>
                     <div>
                         <div id="userName">Пользователь</div>
-                        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">Выйти</a>
+                        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); display: block;">Выйти</a>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,6 @@
     <main class="main-content">
         <div class="container">
             <div class="page-with-sidebar">
-                <!-- Вертикальное меню для десктопа -->
                 <aside class="sidebar">
                     <nav class="sidebar-nav">
                         <a href="my_requests.html" class="active"><i class="fas fa-tasks"></i> Мои заявки</a>
@@ -59,12 +58,10 @@
                         </a>
                     </div>
                     
-                    <!-- Информационное сообщение для учителя -->
                     <div class="info-box teacher-info">
                         <i class="fas fa-info-circle"></i> Уважаемый учитель! Здесь вы можете создавать новые заявки и отслеживать статус уже созданных.
                     </div>
                     
-                    <!-- Фильтры -->
                     <div class="filter-buttons" style="margin-bottom: 1.5rem;">
                         <button class="filter-btn active" data-filter="all">Все</button>
                         <button class="filter-btn" data-filter="new">Новые</button>
@@ -72,7 +69,6 @@
                         <button class="filter-btn" data-filter="rejected">Отклоненные</button>
                     </div>
                     
-                    <!-- Список заявок -->
                     <div id="requestsList" class="requests-list">
                         <div class="loading">Загрузка...</div>
                     </div>

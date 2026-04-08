@@ -2,19 +2,18 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Гимназия №4 - Главная</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ОРИГИНАЛЬНАЯ ШАПКА ГИМНАЗИИ №4 -->
     <header>
         <img src="logo/logo.png" alt="Логотип" class="logo">
         <nav class="main-nav">
             <a href="index.html">Главная</a>
             <a href="about.html">О нас</a>
             <a href="my_requests.html">Заявки</a>
-            <a href="register.html">Регистрация</a>
+            <a href="register.html" id="auth-link">Зарегистрироваться</a>
         </nav>
         <button class="burger-btn" id="burgerBtn">
             <span></span><span></span><span></span>
@@ -26,7 +25,7 @@
         
         <h2>Последние новости</h2>
         <div class="news-grid">
-            <div class="news-card">
+            <div class="news-card" data-news-id="1">
                 <img src="news/news1.jpg" class="news-image" alt="Зимние каникулы" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
                 <div class="news-content">
                     <div class="news-date">📅 01.01.2026</div>
@@ -35,7 +34,7 @@
                 </div>
             </div>
             
-            <div class="news-card">
+            <div class="news-card" data-news-id="2">
                 <img src="news/news2.jpg" class="news-image" alt="Родительское собрание" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
                 <div class="news-content">
                     <div class="news-date">📅 02.01.2026</div>
@@ -44,7 +43,7 @@
                 </div>
             </div>
             
-            <div class="news-card">
+            <div class="news-card" data-news-id="3">
                 <img src="news/news3.jpg" class="news-image" alt="Олимпиада по математике" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
                 <div class="news-content">
                     <div class="news-date">📅 03.01.2026</div>
@@ -53,7 +52,7 @@
                 </div>
             </div>
             
-            <div class="news-card">
+            <div class="news-card" data-news-id="4">
                 <img src="news/news4.jpg" class="news-image" alt="Ремонт в столовой" onerror="this.src='https://placehold.co/400x200?text=Нет+фото'">
                 <div class="news-content">
                     <div class="news-date">📅 04.01.2026</div>
@@ -63,7 +62,18 @@
             </div>
         </div>
         
-        <div class="counter">Посетителей сегодня: <span id="counter"></span></div>
+        <!-- Модальное окно для новостей -->
+        <div id="newsModal" class="news-modal">
+            <div class="news-modal-content">
+                <img id="modalImage" class="news-modal-image" src="" alt="">
+                <div class="news-modal-body">
+                    <div class="news-modal-date" id="modalDate"></div>
+                    <h2 class="news-modal-title" id="modalTitle"></h2>
+                    <div class="news-modal-description" id="modalDescription"></div>
+                    <button class="news-modal-close" id="closeModalBtn">Закрыть</button>
+                </div>
+            </div>
+        </div>
     </main>
     
     <footer>
@@ -92,12 +102,11 @@
         </div>
     </footer>
     
-    <!-- Мобильное меню (без кнопки "Войти") -->
     <div class="mobile-nav" id="mobileNav">
         <a href="index.html">Главная</a>
         <a href="about.html">О нас</a>
         <a href="my_requests.html">Заявки</a>
-        <a href="register.html">Регистрация</a>
+        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
     </div>
     <div class="overlay" id="overlay"></div>
     

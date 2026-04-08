@@ -1,68 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Заявки - Гимназия №4</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гимназия №4 - Регистрация</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <img src="logo/logo.png" alt="Логотип" class="logo">
-        <nav class="main-nav">
-            <a href="index.html">Главная</a>
-            <a href="about.html">О нас</a>
-            <a href="my_requests.html">Заявки</a>
-            <a href="register.html" id="auth-link">Зарегистрироваться</a>
-        </nav>
-        <button class="burger-btn" id="burgerBtn">
-            <span></span><span></span><span></span>
-        </button>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <img src="logo/logo.png" alt="Логотип" class="logo-img" onerror="this.src='https://placehold.co/50x50?text=Г4'">
+                    <span>Гимназия №4</span>
+                </a>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav class="main-nav" id="desktopNav"></nav>
+                
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">А</div>
+                    <div>
+                        <div id="userName">Пользователь</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
-    <main>
-        <h1>Мои заявки</h1>
-        
-        <div id="teacher-info" class="info-box teacher-info hidden">
-            <p>✅ Вы имеете права учителя — вы можете создавать и отправлять заявки.</p>
-        </div>
-        
-        <div id="user-info" class="info-box user-info hidden">
-            <p>⚠️ У вас нет прав учителя — вы не можете создавать заявки. Только просмотр.</p>
-            <p>Обратитесь к администратору для получения прав учителя.</p>
-        </div>
-        
-        <div id="admin-info" class="info-box admin-info hidden">
-            <p>👑 Вы администратор — вы можете управлять всеми заявками и правами пользователей.</p>
-        </div>
-        
-        <button id="new-request-btn" class="new-request-btn">+ Новая заявка</button>
-        
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">Все</button>
-            <button class="filter-btn" data-filter="Новая">Новые</button>
-            <button class="filter-btn" data-filter="Решена">Решенные</button>
-            <button class="filter-btn" data-filter="Отклонена">Отклоненные</button>
-        </div>
-        
-        <!-- Контейнер для карточек (телефон) -->
-        <div class="requests-cards" id="requests-cards"></div>
-        
-        <!-- Таблица для десктопа -->
-        <div class="table-wrapper desktop-only">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Название</th>
-                        <th>Категория</th>
-                        <th>Статус</th>
-                        <th>Действие</th>
-                    </tr>
-                </thead>
-                <tbody id="requests-table"></tbody>
-            </table>
+
+    <div class="mobile-nav" id="mobileNav"></div>
+    <div class="overlay" id="mobileOverlay"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-container">
+                <h1 class="page-title text-center">Регистрация</h1>
+                <p class="text-center text-muted mb-3">Создайте учетную запись</p>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="fullName" class="form-label required">ФИО</label>
+                        <input type="text" id="fullName" class="form-input" placeholder="Иванова Мария Петровна" required>
+                        <div class="error-message" id="fullNameError">ФИО должно содержать только русские буквы</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login" class="form-label required">Логин</label>
+                        <input type="text" id="login" class="form-input" placeholder="teacher_ivanova" required>
+                        <div class="error-message" id="loginError">Логин должен содержать только латиницу</div>
+                        <div class="success-message" id="loginSuccess">Логин доступен</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label required">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="teacher@gym4.ru" required>
+                        <div class="error-message" id="emailError">Введите корректный email</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label required">Пароль</label>
+                        <input type="password" id="password" class="form-input" placeholder="Не менее 6 символов" required>
+                        <div class="error-message" id="passwordError">Пароль должен быть не менее 6 символов</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label required">Подтверждение пароля</label>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="Повторите пароль" required>
+                        <div class="error-message" id="confirmPasswordError">Пароли не совпадают</div>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input type="checkbox" id="agree" class="form-check-input" required>
+                        <label for="agree" class="form-check-label">
+                            Я согласен на обработку <a href="#">персональных данных</a>
+                        </label>
+                    </div>
+                    <div class="error-message" id="agreeError">Необходимо согласие</div>
+                    
+                    <button type="submit" class="btn btn-accent btn-block">Зарегистрироваться</button>
+                    
+                    <div class="text-center mt-3">
+                        <p class="text-muted">Уже есть аккаунт? <a href="login.html">Войдите</a></p>
+                    </div>
+                </form>
+            </div>
         </div>
     </main>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -81,20 +113,14 @@
                 <h3>Навигация</h3>
                 <p><a href="index.html">Главная</a></p>
                 <p><a href="about.html">О нас</a></p>
-                <p><a href="my_requests.html">Заявки</a></p>
+                <p><a href="#" id="footerRequestsLink">Заявки</a></p>
             </div>
         </div>
         <div class="footer-bottom">
             <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
         </div>
     </footer>
-    <div class="mobile-nav" id="mobileNav">
-        <a href="index.html">Главная</a>
-        <a href="about.html">О нас</a>
-        <a href="my_requests.html">Заявки</a>
-        <a href="register.html" id="mobile-auth-link">Зарегистрироваться</a>
-    </div>
-    <div class="overlay" id="overlay"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

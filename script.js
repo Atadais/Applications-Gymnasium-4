@@ -58,11 +58,19 @@ function initAuth() {
         if (loginLink) loginLink.style.display = 'none';
         if (registerLink) registerLink.style.display = 'none';
         if (userInfo) userInfo.style.display = 'flex';
-        if (userNameSpan) userNameSpan.textContent = currentUser.fullName;
+        
+        // ИСПРАВЛЕНО: для админа显示 "Администратор", для других - полное имя
+        if (userNameSpan) {
+            if (currentUser.role === 'admin') {
+                userNameSpan.textContent = 'Администратор';
+            } else {
+                userNameSpan.textContent = currentUser.fullName;
+            }
+        }
         
         if (userAvatar) {
             if (currentUser.role === 'admin') {
-                userAvatar.textContent = 'АА';
+                userAvatar.textContent = 'А';  // ИСПРАВЛЕНО: одна буква А
             } else {
                 userAvatar.textContent = getInitials(currentUser.fullName);
             }

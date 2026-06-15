@@ -511,19 +511,46 @@ function initTheme() {
     
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+        
         themeToggle.onclick = function(e) {
             e.preventDefault();
             const currentTheme = document.documentElement.getAttribute('data-theme');
             if (currentTheme === 'dark') {
                 document.documentElement.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
                 showToast('Светлая тема включена', 'success');
+                updateMobileThemeButton();
             } else {
                 document.documentElement.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
                 showToast('Тёмная тема включена', 'success');
+                updateMobileThemeButton();
             }
         };
+    }
+}
+
+function updateMobileThemeButton() {
+    const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+    if (mobileThemeToggle) {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const icon = mobileThemeToggle.querySelector('i');
+        const span = mobileThemeToggle.querySelector('span');
+        if (currentTheme === 'dark') {
+            if (icon) icon.className = 'fas fa-sun';
+            if (span) span.textContent = 'Светлая тема';
+        } else {
+            if (icon) icon.className = 'fas fa-moon';
+            if (span) span.textContent = 'Тёмная тема';
+        }
     }
 }
 
@@ -552,27 +579,68 @@ function updateNavigation() {
     const footerRequestsLink = document.getElementById('footerRequestsLink');
     if (!desktopNav) return;
     let navHtml = '', mobileHtml = '';
+    
     if (currentUser) {
         if (currentUser.role === 'admin') {
-            navHtml = '<ul><li><a href="index.html">Главная</a></li><li><a href="about.html">О нас</a></li><li><a href="admin.html">Админ-панель</a></li></ul>';
-            mobileHtml = '<a href="index.html">Главная</a><a href="about.html">О нас</a><a href="admin.html">Админ-панель</a><a href="#" id="mobileLogoutLink">Выйти</a>';
+            navHtml = '<ul><li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li><li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li><li><a href="admin.html"><i class="fas fa-crown"></i> Админ-панель</a></li></ul>';
+            mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="admin.html"><i class="fas fa-crown"></i> Админ-панель</a>';
             if (footerRequestsLink) footerRequestsLink.href = 'admin.html';
         } else if (currentUser.role === 'teacher') {
-            navHtml = '<ul><li><a href="index.html">Главная</a></li><li><a href="about.html">О нас</a></li><li><a href="my_requests.html">Мои заявки</a></li></ul>';
-            mobileHtml = '<a href="index.html">Главная</a><a href="about.html">О нас</a><a href="my_requests.html">Мои заявки</a><a href="#" id="mobileLogoutLink">Выйти</a>';
+            navHtml = '<ul><li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li><li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li><li><a href="my_requests.html"><i class="fas fa-tasks"></i> Мои заявки</a></li></ul>';
+            mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="my_requests.html"><i class="fas fa-tasks"></i> Мои заявки</a>';
             if (footerRequestsLink) footerRequestsLink.href = 'my_requests.html';
         } else {
-            navHtml = '<ul><li><a href="index.html">Главная</a></li><li><a href="about.html">О нас</a></li><li><a href="#" onclick="alert(\'Доступ откроется после подтверждения администратором\'); return false;">Заявки (ожидание)</a></li></ul>';
-            mobileHtml = '<a href="index.html">Главная</a><a href="about.html">О нас</a><a href="#" onclick="alert(\'Доступ откроется после подтверждения\'); return false;">Заявки (ожидание)</a><a href="#" id="mobileLogoutLink">Выйти</a>';
+            navHtml = '<ul><li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li><li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li><li><a href="#" onclick="alert(\'Доступ откроется после подтверждения администратором\'); return false;"><i class="fas fa-clock"></i> Заявки (ожидание)</a></li></ul>';
+            mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="#" onclick="alert(\'Доступ откроется после подтверждения\'); return false;"><i class="fas fa-clock"></i> Заявки (ожидание)</a>';
             if (footerRequestsLink) footerRequestsLink.href = '#';
         }
     } else {
-        navHtml = '<ul><li><a href="index.html">Главная</a></li><li><a href="about.html">О нас</a></li><li><a href="login.html">Вход</a></li><li><a href="register.html">Регистрация</a></li></ul>';
-        mobileHtml = '<a href="index.html">Главная</a><a href="about.html">О нас</a><a href="login.html">Вход</a><a href="register.html">Регистрация</a>';
+        navHtml = '<ul><li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li><li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li><li><a href="login.html"><i class="fas fa-sign-in-alt"></i> Вход</a></li><li><a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a></li></ul>';
+        mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="login.html"><i class="fas fa-sign-in-alt"></i> Вход</a><a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>';
         if (footerRequestsLink) footerRequestsLink.href = 'login.html';
     }
+    
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const themeIcon = currentTheme === 'dark' ? 'fa-sun' : 'fa-moon';
+    const themeText = currentTheme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+    
+    mobileHtml += '<div class="theme-toggle-mobile" id="mobileThemeToggle"><i class="fas ' + themeIcon + '"></i><span>' + themeText + '</span></div>';
+    mobileHtml += '<a href="#" id="mobileLogoutLink"><i class="fas fa-sign-out-alt"></i> Выйти</a>';
+    
     desktopNav.innerHTML = navHtml;
     if (mobileNav) mobileNav.innerHTML = mobileHtml;
+    
+    const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+    if (mobileThemeToggle) {
+        mobileThemeToggle.onclick = function(e) {
+            e.preventDefault();
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                showToast('Светлая тема включена', 'success');
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-moon';
+                    this.querySelector('span').textContent = 'Тёмная тема';
+                }
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                showToast('Тёмная тема включена', 'success');
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-sun';
+                    this.querySelector('span').textContent = 'Светлая тема';
+                }
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        };
+    }
+    
     const mobileLogout = document.getElementById('mobileLogoutLink');
     if (mobileLogout) mobileLogout.onclick = function(e) { e.preventDefault(); logout(); };
 }
@@ -832,7 +900,7 @@ function initCreateRequest() {
     }
 }
 
-// --- Админ-панель (ИСПРАВЛЕННАЯ) ---
+// --- Админ-панель ---
 function initAdmin() {
     if (!currentUser || currentUser.role !== 'admin') { window.location.href = 'login.html'; return; }
     loadAllRequests(); loadCategoriesList(); loadTemplatesList(); loadUsersList(); updateStats(); initNewsConstructor();

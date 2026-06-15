@@ -1,4 +1,4 @@
-// script.js - Полная логика системы заявок Гимназии №4 (автономная версия, без БД)
+// script.js - Полная логика системы заявок Гимназии №4
 
 // --- Глобальные переменные ---
 let currentUser = null;
@@ -40,7 +40,7 @@ function loadData() {
     if (savedUsers) users = JSON.parse(savedUsers);
     else {
         users = [
-            { id: 1, fullName: 'Администратор', login: 'admin', password: 'admin123', email: 'admin@gym4.ru', role: 'admin', regDate: '01.01.2025' },
+            { id: 1, fullName: 'Администратор', login: 'Admin', password: 'admin', email: 'admin@gym4.ru', role: 'admin', regDate: '01.01.2025' },
             { id: 2, fullName: 'Иванова Мария Петровна', login: 'teacher', password: 'teacher123', email: 'teacher@gym4.ru', role: 'teacher', regDate: '02.01.2025' }
         ];
         localStorage.setItem('users', JSON.stringify(users));
@@ -90,7 +90,7 @@ function saveCategories() { localStorage.setItem('categories', JSON.stringify(ca
 function saveNews() { localStorage.setItem('newsData', JSON.stringify(newsData)); }
 function saveTemplates() { localStorage.setItem('templates', JSON.stringify(templates)); }
 
-// ========== УВЕДОМЛЕНИЯ В РЕАЛЬНОМ ВРЕМЕНИ ==========
+// ========== УВЕДОМЛЕНИЯ ==========
 function startNotificationPolling() {
     if (notificationInterval) clearInterval(notificationInterval);
     notificationInterval = setInterval(() => {
@@ -873,13 +873,13 @@ function loadAllRequests() {
         const user = users.find(u => u.id === req.userId);
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${req.id}</td><td>${req.date}</td><td>${user ? user.fullName : 'Неизвестно'}</td>
-            <td>${escapeHtml(req.title)}</td><td>${escapeHtml(req.category)}</td>
-            <td><span class="status-badge status-${req.status}">${getStatusText(req.status)}</span></td>
+            <td>${req.id}${req.date}${user ? user.fullName : 'Неизвестно'}
+            <td>${escapeHtml(req.title)}${escapeHtml(req.category)}
+            <td><span class="status-badge status-${req.status}">${getStatusText(req.status)}</span>
             <td>
                 ${req.status === 'new' ? '<button class="btn btn-success btn-sm solve-request" data-id="' + req.id + '">✅ Решить</button> <button class="btn btn-danger btn-sm reject-request" data-id="' + req.id + '">❌ Отклонить</button>' : ''}
                 <button class="btn btn-info btn-sm chat-request" data-id="' + req.id + '" data-title="' + escapeHtml(req.title) + '"><i class="fas fa-comment"></i> Чат</button>
-            </td>
+                
         `;
         tableBody.appendChild(row);
     }
@@ -925,10 +925,10 @@ function loadUsersList() {
         const roleDisplay = user.role === 'admin' ? '👑 Админ' : (user.role === 'teacher' ? '👨‍🏫 Учитель' : '👤 Пользователь');
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${user.id}</td><td>${escapeHtml(user.fullName)}</td><td>${escapeHtml(user.login)}</td>
-            <td>${escapeHtml(user.email)}</td>
-            <td>${roleDisplay} ${user.role === 'user' ? '<button class="btn btn-success btn-sm confirm-user" data-id="' + user.id + '">✅ Подтвердить</button>' : ''} ${user.role === 'teacher' ? '<button class="btn btn-warning btn-sm revoke-user" data-id="' + user.id + '">🔄 Отозвать</button>' : ''}</td>
-            <td>${userRequests}</td>
+            <td>${user.id}${escapeHtml(user.fullName)}${escapeHtml(user.login)}
+            <td>${escapeHtml(user.email)}
+            <td>${roleDisplay} ${user.role === 'user' ? '<button class="btn btn-success btn-sm confirm-user" data-id="' + user.id + '">✅ Подтвердить</button>' : ''} ${user.role === 'teacher' ? '<button class="btn btn-warning btn-sm revoke-user" data-id="' + user.id + '">🔄 Отозвать</button>' : ''}
+            <td>${userRequests}
         `;
         tableBody.appendChild(row);
     }

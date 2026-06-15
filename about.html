@@ -26,6 +26,10 @@
                 
                 <nav class="main-nav" id="desktopNav"></nav>
                 
+                <button class="theme-toggle" id="themeToggle" title="Сменить тему">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
                 <div class="user-info" id="userInfo" style="display: none;">
                     <div class="user-avatar" id="userAvatar">А</div>
                     <div>
@@ -95,10 +99,10 @@
                     <section class="about-section animate">
                         <h3>Ценности</h3>
                         <ul style="margin-left: 1.5rem;">
-                            <li>🏆 Качество образования</li>
-                            <li>🤝 Уважение и взаимопомощь</li>
-                            <li>💡 Инновации и развитие</li>
-                            <li>🌟 Индивидуальный подход</li>
+                            <li> Качество образования</li>
+                            <li> Уважение и взаимопомощь</li>
+                            <li> Инновации и развитие</li>
+                            <li> Индивидуальный подход</li>
                         </ul>
                     </section>
                 </div>
@@ -116,13 +120,31 @@
         </div>
     </main>
 
+    <!-- Чат поддержки -->
+    <div class="support-chat">
+        <button class="chat-toggle" id="chatToggle">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span><i class="fas fa-robot"></i> Помощник</span>
+                <button class="chat-close" id="chatClose">&times;</button>
+            </div>
+            <div class="chat-messages"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Задайте вопрос...">
+                <button class="chat-send" id="chatSend"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Контакты</h3>
-                <p>📧 bog.men98@gmail.com</p>
-                <p>📞 +7 928 714 97 23</p>
-                <p>📍 Нальчик, проспект Ленина, 69</p>
+                <p> bog.men98@gmail.com</p>
+                <p> +7 928 714 97 23</p>
+                <p> Нальчик, проспект Ленина, 69</p>
             </div>
             <div class="footer-section">
                 <h3>О проекте</h3>
@@ -138,7 +160,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
+            <p> Все права защищены | Гимназия №4 г. Нальчик </p>
         </div>
     </footer>
 

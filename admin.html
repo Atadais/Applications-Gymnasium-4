@@ -27,12 +27,12 @@
                 <nav class="main-nav" id="desktopNav"></nav>
                 
                 <div class="user-info" id="userInfo" style="display: none;">
-    <div class="user-avatar" id="userAvatar">А</div>
-    <div style="line-height: 1.4;">
-        <div id="userName" style="font-weight: 500;"></div>
-        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-decoration: none; display: inline-block;">Выйти</a>
-    </div>
-</div>
+                    <div class="user-avatar" id="userAvatar">А</div>
+                    <div style="line-height: 1.4;">
+                        <div id="userName" style="font-weight: 500;"></div>
+                        <a href="#" id="logoutLink" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-decoration: none; display: inline-block;">Выйти</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -54,6 +54,10 @@
                     <div class="stat-label">Новых</div>
                 </div>
                 <div class="stat-card">
+                    <div class="stat-number" id="inProgressRequests">0</div>
+                    <div class="stat-label">В работе</div>
+                </div>
+                <div class="stat-card">
                     <div class="stat-number" id="solvedRequests">0</div>
                     <div class="stat-label">Решенных</div>
                 </div>
@@ -64,9 +68,11 @@
             </div>
             
             <div class="admin-tabs">
-                <button class="tab-btn active" data-tab="requests">📋 Все заявки</button>
-                <button class="tab-btn" data-tab="categories">🏷️ Категории</button>
-                <button class="tab-btn" data-tab="users">👥 Пользователи</button>
+                <button class="tab-btn active" data-tab="requests"> Все заявки</button>
+                <button class="tab-btn" data-tab="categories"> Категории</button>
+                <button class="tab-btn" data-tab="templates"> Шаблоны</button>
+                <button class="tab-btn" data-tab="users"> Пользователи</button>
+                <button class="tab-btn" data-tab="news"> Конструктор</button>
             </div>
             
             <div id="requestsTab" class="tab-content active">
@@ -79,7 +85,6 @@
                             <tbody id="requestsTableBody"></tbody>
                         </table>
                     </div>
-                    <div id="requestsCards" class="requests-cards"></div>
                 </div>
             </div>
             
@@ -91,7 +96,24 @@
                     <h3>Добавить категорию</h3>
                     <div class="add-category-form">
                         <input type="text" id="newCategoryName" placeholder="Новая категория">
-                        <button class="btn btn-accent" onclick="addCategory()">+ Добавить</button>
+                        <button class="btn btn-accent" id="addCategoryBtn">+ Добавить</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="templatesTab" class="tab-content">
+                <div class="categories-manager">
+                    <h3>Существующие шаблоны</h3>
+                    <div id="templatesList" class="category-list"></div>
+                    
+                    <h3>Добавить шаблон</h3>
+                    <div class="add-category-form" style="flex-direction: column;">
+                        <input type="text" id="newTemplateTitle" placeholder="Название шаблона">
+                        <textarea id="newTemplateDesc" placeholder="Описание шаблона" rows="2" style="width: 100%;"></textarea>
+                        <select id="newTemplateCategory" style="width: 100%;">
+                            <option value="">Выберите категорию</option>
+                        </select>
+                        <button class="btn btn-accent" id="addTemplateBtn">+ Добавить шаблон</button>
                     </div>
                 </div>
             </div>
@@ -108,6 +130,10 @@
                     </div>
                 </div>
             </div>
+
+            <div id="newsTab" class="tab-content">
+                <div id="newsConstructor"></div>
+            </div>
         </div>
     </main>
 
@@ -115,15 +141,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Отклонение заявки</h3>
-                <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+                <button class="modal-close" id="closeRejectModalBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <label>Причина отклонения:</label>
                 <textarea id="rejectReason" rows="4" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;"></textarea>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeRejectModal()">Отмена</button>
-                <button class="btn btn-danger" onclick="confirmReject()">Отклонить</button>
+                <button class="btn btn-secondary" id="cancelRejectBtn">Отмена</button>
+                <button class="btn btn-danger" id="confirmRejectBtn">Отклонить</button>
             </div>
         </div>
     </div>
@@ -132,9 +158,9 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Контакты</h3>
-                <p>📧 bog.men98@gmail.com</p>
-                <p>📞 +7 928 714 97 23</p>
-                <p>📍 Нальчик, ул. Кулиева, д. 20</p>
+                <p> bog.men98@gmail.com</p>
+                <p> +7 928 714 97 23</p>
+                <p> Нальчик, проспект Ленина, 69</p>
             </div>
             <div class="footer-section">
                 <h3>О проекте</h3>
@@ -150,7 +176,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
+            <p> Все права защищены | Гимназия №4 г. Нальчик </p>
         </div>
     </footer>
 

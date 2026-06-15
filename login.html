@@ -26,6 +26,10 @@
                 
                 <nav class="main-nav" id="desktopNav"></nav>
                 
+                <button class="theme-toggle" id="themeToggle" title="Сменить тему">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
                 <div class="user-info" id="userInfo" style="display: none;">
                     <div class="user-avatar" id="userAvatar">А</div>
                     <div>
@@ -50,13 +54,11 @@
                     <div class="form-group">
                         <label for="login" class="form-label required">Логин</label>
                         <input type="text" id="login" class="form-input" placeholder="Введите логин" required>
-                        <div class="error-message" id="loginError">Неверный логин или пароль</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="password" class="form-label required">Пароль</label>
                         <input type="password" id="password" class="form-input" placeholder="Введите пароль" required>
-                        <div class="error-message" id="passwordError">Неверный логин или пароль</div>
                     </div>
                     
                     <button type="submit" class="btn btn-accent btn-block">Войти</button>
@@ -65,17 +67,27 @@
                         <p class="text-muted">Нет аккаунта? <a href="register.html">Зарегистрируйтесь</a></p>
                     </div>
                 </form>
-                
-                <div class="mt-3 text-center">
-                    <p class="text-muted" style="font-size: 0.875rem;">
-                        <strong>Тестовые аккаунты:</strong><br>
-                        👑 Админ: admin / admin123<br>
-                        👨‍🏫 Учитель: teacher / teacher123
-                    </p>
-                </div>
             </div>
         </div>
     </main>
+
+    <!-- Чат поддержки -->
+    <div class="support-chat">
+        <button class="chat-toggle" id="chatToggle">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span><i class="fas fa-robot"></i> Помощник Гимназии №4</span>
+                <button class="chat-close" id="chatClose">&times;</button>
+            </div>
+            <div class="chat-messages"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Задайте вопрос...">
+                <button class="chat-send" id="chatSend"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <div class="footer-content">
@@ -83,7 +95,7 @@
                 <h3>Контакты</h3>
                 <p>📧 bog.men98@gmail.com</p>
                 <p>📞 +7 928 714 97 23</p>
-                <p>📍 Нальчик, ул. Кулиева, д. 20</p>
+                <p>📍 Нальчик, проспект Ленина, 69</p>
             </div>
             <div class="footer-section">
                 <h3>О проекте</h3>

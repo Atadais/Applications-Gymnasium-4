@@ -26,6 +26,10 @@
                 
                 <nav class="main-nav" id="desktopNav"></nav>
                 
+                <button class="theme-toggle" id="themeToggle" title="Сменить тему">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
                 <div class="user-info" id="userInfo" style="display: none;">
                     <div class="user-avatar" id="userAvatar">А</div>
                     <div>
@@ -56,7 +60,7 @@
                     <div class="form-group">
                         <label for="login" class="form-label required">Логин</label>
                         <input type="text" id="login" class="form-input" placeholder="teacher_ivanova" required>
-                        <div class="error-message" id="loginError">Логин должен содержать только латиницу</div>
+                        <div class="error-message" id="loginError">Логин уже занят или содержит недопустимые символы</div>
                         <div class="success-message" id="loginSuccess">Логин доступен</div>
                     </div>
                     
@@ -96,13 +100,31 @@
         </div>
     </main>
 
+    <!-- Чат поддержки -->
+    <div class="support-chat">
+        <button class="chat-toggle" id="chatToggle">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span><i class="fas fa-robot"></i> Помощник Гимназии №4</span>
+                <button class="chat-close" id="chatClose">&times;</button>
+            </div>
+            <div class="chat-messages"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Задайте вопрос...">
+                <button class="chat-send" id="chatSend"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Контакты</h3>
                 <p>📧 bog.men98@gmail.com</p>
                 <p>📞 +7 928 714 97 23</p>
-                <p>📍 Нальчик, ул. Кулиева, д. 20</p>
+                <p>📍 Нальчик, проспект Ленина, 69</p>
             </div>
             <div class="footer-section">
                 <h3>О проекте</h3>

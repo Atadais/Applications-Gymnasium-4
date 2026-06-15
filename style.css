@@ -218,7 +218,7 @@ a:hover { color: var(--accent-dark); }
 
 /* Кнопка переключения темы */
 .theme-toggle {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.15);
     border: none;
     color: white;
     width: 40px;
@@ -229,13 +229,32 @@ a:hover { color: var(--accent-dark); }
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    transition: var(--transition);
+    transition: all 0.3s ease;
     margin-left: 0.5rem;
+    flex-shrink: 0;
 }
 
 .theme-toggle:hover {
     background: var(--accent-color);
     transform: rotate(15deg);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle:focus {
+    outline: none;
+    background: rgba(255,255,255,0.15);
+}
+
+[data-theme="dark"] .theme-toggle {
+    background: rgba(255,255,255,0.15);
+    color: #ffd700;
+}
+
+[data-theme="dark"] .theme-toggle:focus {
+    background: rgba(255,255,255,0.15);
 }
 
 /* Шапка */
@@ -317,6 +336,18 @@ a:hover { color: var(--accent-dark); }
     align-items: center;
     gap: 0.75rem;
     flex-shrink: 0;
+    max-width: 220px;
+}
+
+.user-info div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-info #userName {
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .user-avatar {
@@ -328,6 +359,7 @@ a:hover { color: var(--accent-dark); }
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    flex-shrink: 0;
 }
 
 /* Мобильное меню */
@@ -590,7 +622,6 @@ a:hover { color: var(--accent-dark); }
     margin-bottom: 1rem;
 }
 
-/* Лайки и дизлайки на карточках новостей - ПРИЖАТЫ К НИЗУ */
 .news-actions {
     display: flex;
     gap: 1rem;
@@ -619,7 +650,6 @@ a:hover { color: var(--accent-dark); }
     font-size: 0.85rem;
 }
 
-/* Преимущества */
 .features-section { padding: 2rem 0; }
 
 .features-grid {
@@ -746,20 +776,6 @@ a:hover { color: var(--accent-dark); }
     margin-bottom: 1rem;
 }
 
-.request-files {
-    margin: 0.75rem 0;
-    padding: 0.5rem;
-    background: rgba(0,0,0,0.03);
-    border-radius: var(--radius);
-}
-
-.request-files a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.85rem;
-}
-
 .request-footer {
     display: flex;
     justify-content: space-between;
@@ -768,7 +784,6 @@ a:hover { color: var(--accent-dark); }
     gap: 0.5rem;
 }
 
-/* Рейтинг звёздами */
 .rating-stars {
     display: flex;
     gap: 0.25rem;
@@ -785,17 +800,6 @@ a:hover { color: var(--accent-dark); }
 }
 
 .star:hover, .star.active { color: #ffc107; }
-
-.rating-comment {
-    flex: 1;
-    min-width: 150px;
-    padding: 0.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    background: var(--input-bg);
-    color: var(--text-color);
-    resize: vertical;
-}
 
 .status-badge {
     display: inline-block;
@@ -832,7 +836,6 @@ a:hover { color: var(--accent-dark); }
     border-color: var(--accent-color);
 }
 
-/* Шаблоны заявок */
 .templates-section {
     margin-bottom: 1.5rem;
 }
@@ -902,7 +905,6 @@ a:hover { color: var(--accent-dark); }
 
 .stat-label { font-size: 0.85rem; color: var(--text-light); }
 
-/* Вкладки */
 .admin-tabs {
     display: flex;
     gap: 0.5rem;
@@ -935,7 +937,6 @@ a:hover { color: var(--accent-dark); }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-/* Таблицы */
 .requests-table {
     background: var(--bg-card);
     border-radius: var(--radius);
@@ -966,7 +967,6 @@ td {
 
 tr:hover { background: rgba(0,0,0,0.05); }
 
-/* Категории и шаблоны */
 .category-list {
     display: flex;
     flex-wrap: wrap;
@@ -1003,7 +1003,6 @@ tr:hover { background: rgba(0,0,0,0.05); }
 
 .add-category-form input { flex: 1; }
 
-/* Конструктор новостей */
 .news-editor {
     background: var(--bg-card);
     border-radius: var(--radius);
@@ -1071,7 +1070,6 @@ tr:hover { background: rgba(0,0,0,0.05); }
     border-radius: var(--radius);
 }
 
-/* Toast уведомления */
 .toast-container {
     position: fixed;
     top: 80px;
@@ -1101,7 +1099,6 @@ tr:hover { background: rgba(0,0,0,0.05); }
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* Модальное окно */
 .modal {
     display: none;
     position: fixed;
@@ -1147,7 +1144,6 @@ tr:hover { background: rgba(0,0,0,0.05); }
     margin-top: 1.5rem;
 }
 
-/* Подвал */
 footer {
     background: var(--footer-bg);
     color: white;
@@ -1189,7 +1185,6 @@ footer {
     border-top: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Анимации */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1206,29 +1201,6 @@ footer {
 .mt-3 { margin-top: 1rem; }
 .mb-3 { margin-bottom: 1rem; }
 
-/* Адаптив */
-@media (max-width: 768px) {
-    .main-nav { display: none; }
-    .mobile-menu-btn { display: block; }
-    .page-with-sidebar { flex-direction: column; }
-    .sidebar { width: 100%; margin-bottom: 1rem; }
-    .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
-    .sidebar-nav a { flex: 1; justify-content: center; }
-    .sidebar-nav a:hover { transform: none; }
-    .admin-stats { grid-template-columns: repeat(2, 1fr); }
-    .hero-title { font-size: 1.8rem; }
-    .footer-content { grid-template-columns: 1fr; text-align: center; }
-    .admin-tabs { flex-wrap: wrap; }
-    .tab-btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .news-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (min-width: 1025px) {
-    .news-grid { grid-template-columns: repeat(4, 1fr); }
-}
 /* Чат поддержки - СПРАВА */
 .support-chat {
     position: fixed;
@@ -1366,7 +1338,6 @@ footer {
     cursor: pointer;
 }
 
-/* Тёмная тема для чата */
 [data-theme="dark"] .chat-window {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -1388,4 +1359,122 @@ footer {
 [data-theme="dark"] .chat-quick-questions button:hover {
     background: var(--accent-color);
     color: white;
+}
+
+/* ========== АДАПТИВ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
+@media (max-width: 768px) {
+    .main-nav { display: none; }
+    .mobile-menu-btn { display: block; }
+    
+    .header-content {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .logo {
+        order: 1;
+    }
+    
+    .mobile-menu-btn {
+        order: 2;
+    }
+    
+    .theme-toggle {
+        order: 3;
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        margin-left: auto;
+    }
+    
+    .user-info {
+        order: 4;
+        max-width: 160px;
+    }
+    
+    .user-info #userName {
+        font-size: 0.8rem;
+    }
+    
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+    
+    .page-with-sidebar { flex-direction: column; }
+    .sidebar { width: 100%; margin-bottom: 1rem; }
+    .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+    .sidebar-nav a { flex: 1; justify-content: center; }
+    .sidebar-nav a:hover { transform: none; }
+    .admin-stats { grid-template-columns: repeat(2, 1fr); }
+    .hero-title { font-size: 1.8rem; }
+    .footer-content { grid-template-columns: 1fr; text-align: center; }
+    .admin-tabs { flex-wrap: wrap; }
+    .tab-btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
+    
+    .support-chat {
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .chat-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .chat-window {
+        position: fixed;
+        bottom: 70px;
+        right: 10px;
+        width: calc(100% - 20px);
+        max-width: 350px;
+        height: 450px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo span {
+        font-size: 1rem;
+    }
+    
+    .logo-img {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .user-info {
+        max-width: 140px;
+    }
+    
+    .user-info #userName {
+        font-size: 0.7rem;
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+    
+    .theme-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .chat-toggle {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .news-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1025px) {
+    .news-grid { grid-template-columns: repeat(4, 1fr); }
 }

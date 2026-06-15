@@ -269,10 +269,13 @@ a:hover { color: var(--accent-dark); }
     transition: background-color 0.3s ease;
 }
 
+/* Шапка - исправленная */
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .logo {
@@ -362,6 +365,81 @@ a:hover { color: var(--accent-dark); }
     flex-shrink: 0;
 }
 
+/* Кнопка тёмной темы */
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+.theme-toggle:hover {
+    background: var(--accent-color);
+    transform: rotate(15deg);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Адаптив для телефонов */
+@media (max-width: 768px) {
+    .main-nav {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+        order: 1;
+    }
+    
+    .logo {
+        order: 2;
+        margin-right: auto;
+    }
+    
+    .logo span {
+        font-size: 1rem;
+    }
+    
+    .logo-img {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .theme-toggle {
+        order: 3;
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        margin-left: 0;
+    }
+    
+    .user-info {
+        order: 4;
+        max-width: 150px;
+    }
+    
+    .user-info #userName {
+        font-size: 0.75rem;
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+}
 /* Мобильное меню */
 .mobile-nav {
     position: fixed;

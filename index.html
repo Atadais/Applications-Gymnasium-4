@@ -20,11 +20,16 @@
                     <span>Гимназия №4</span>
                 </a>
                 
-                <button class="mobile-menu-btn" id="mobileMenuBtn">й
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
                     <i class="fas fa-bars"></i>
                 </button>
                 
                 <nav class="main-nav" id="desktopNav"></nav>
+                
+                
+                <button class="theme-toggle" id="themeToggle" title="Сменить тему">
+                    <i class="fas fa-moon"></i>
+                </button>
                 
                 <div class="user-info" id="userInfo" style="display: none;">
                     <div class="user-avatar" id="userAvatar">А</div>
@@ -55,7 +60,7 @@
             </section>
 
             <section class="news-section">
-                <h2 class="section-title">📰 Новости гимназии</h2>
+                <h2 class="section-title"> Новости гимназии</h2>
                 <p class="section-subtitle">Актуальные события и объявления</p>
                 <div class="news-grid" id="newsGrid"></div>
             </section>
@@ -64,22 +69,22 @@
                 <h2 class="section-title">Почему удобно?</h2>
                 <div class="features-grid">
                     <div class="feature-card animate">
-                        <div class="feature-icon">⚡</div>
+                        <div class="feature-icon"></div>
                         <h3>Быстро</h3>
                         <p>Создание заявки занимает 1 минуту</p>
                     </div>
                     <div class="feature-card animate">
-                        <div class="feature-icon">📊</div>
+                        <div class="feature-icon"></div>
                         <h3>Прозрачно</h3>
                         <p>Отслеживайте статус заявки онлайн</p>
                     </div>
                     <div class="feature-card animate">
-                        <div class="feature-icon">🔔</div>
+                        <div class="feature-icon"></div>
                         <h3>Удобно</h3>
                         <p>Уведомления о статусе заявки</p>
                     </div>
                     <div class="feature-card animate">
-                        <div class="feature-icon">📱</div>
+                        <div class="feature-icon"></div>
                         <h3>Мобильно</h3>
                         <p>Работает на любых устройствах</p>
                     </div>
@@ -88,6 +93,7 @@
         </div>
     </main>
 
+    <!-- Модальное окно новости -->
     <div id="newsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -101,13 +107,31 @@
         </div>
     </div>
 
+    <!-- Чат поддержки -->
+    <div class="support-chat">
+        <button class="chat-toggle" id="chatToggle">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span><i class="fas fa-robot"></i> Помощник Гимназии №4</span>
+                <button class="chat-close" id="chatClose">&times;</button>
+            </div>
+            <div class="chat-messages"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Задайте вопрос...">
+                <button class="chat-send" id="chatSend"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Контакты</h3>
-                <p>📧 bog.men98@gmail.com</p>
-                <p>📞 +7 928 714 97 23</p>
-                <p>📍 Нальчик, ул. Кулиева, д. 20</p>
+                <p> bog.men98@gmail.com</p>
+                <p> +7 928 714 97 23</p>
+                <p> Нальчик, проспект Ленина, 69</p>
             </div>
             <div class="footer-section">
                 <h3>О проекте</h3>
@@ -123,7 +147,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>✨ Все права защищены | Гимназия №4 г. Нальчик ✨</p>
+            <p> Все права защищены | Гимназия №4 г. Нальчик </p>
         </div>
     </footer>
 

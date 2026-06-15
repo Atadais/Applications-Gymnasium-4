@@ -7,7 +7,6 @@
 }
 
 :root {
-    /* Светлая тема */
     --primary-color: #1e3a5c;
     --accent-color: #e63946;
     --accent-dark: #c1121f;
@@ -32,7 +31,6 @@
 }
 
 [data-theme="dark"] {
-    /* Тёмная тема - исправлено для читаемости */
     --primary-color: #0d2b42;
     --accent-color: #ff6b6b;
     --accent-dark: #ff4757;
@@ -53,7 +51,6 @@
     --code-bg: #0f3460;
 }
 
-/* Исправления для тёмной темы - ссылки и заголовки */
 [data-theme="dark"] a {
     color: #ff9f9f;
 }
@@ -196,7 +193,6 @@ body {
     padding: 0 1rem;
 }
 
-/* Типография */
 h1, h2, h3, h4 {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
@@ -216,7 +212,6 @@ a {
 }
 a:hover { color: var(--accent-dark); }
 
-/* Кнопка переключения темы */
 .theme-toggle {
     background: rgba(255,255,255,0.15);
     border: none;
@@ -245,7 +240,6 @@ a:hover { color: var(--accent-dark); }
 
 .theme-toggle:focus {
     outline: none;
-    background: rgba(255,255,255,0.15);
 }
 
 [data-theme="dark"] .theme-toggle {
@@ -253,11 +247,6 @@ a:hover { color: var(--accent-dark); }
     color: #ffd700;
 }
 
-[data-theme="dark"] .theme-toggle:focus {
-    background: rgba(255,255,255,0.15);
-}
-
-/* Шапка */
 .header {
     background-color: var(--header-bg);
     color: white;
@@ -269,12 +258,10 @@ a:hover { color: var(--accent-dark); }
     transition: background-color 0.3s ease;
 }
 
-/* Шапка - исправленная */
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
     gap: 0.5rem;
 }
 
@@ -332,6 +319,7 @@ a:hover { color: var(--accent-dark); }
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
+    flex-shrink: 0;
 }
 
 .user-info {
@@ -346,6 +334,7 @@ a:hover { color: var(--accent-dark); }
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: right;
 }
 
 .user-info #userName {
@@ -365,82 +354,6 @@ a:hover { color: var(--accent-dark); }
     flex-shrink: 0;
 }
 
-/* Кнопка тёмной темы */
-.theme-toggle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
-    margin-left: 0.5rem;
-}
-
-.theme-toggle:hover {
-    background: var(--accent-color);
-    transform: rotate(15deg);
-}
-
-.theme-toggle:active {
-    transform: scale(0.95);
-}
-
-/* Адаптив для телефонов */
-@media (max-width: 768px) {
-    .main-nav {
-        display: none;
-    }
-    
-    .mobile-menu-btn {
-        display: block;
-        order: 1;
-    }
-    
-    .logo {
-        order: 2;
-        margin-right: auto;
-    }
-    
-    .logo span {
-        font-size: 1rem;
-    }
-    
-    .logo-img {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .theme-toggle {
-        order: 3;
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-        margin-left: 0;
-    }
-    
-    .user-info {
-        order: 4;
-        max-width: 150px;
-    }
-    
-    .user-info #userName {
-        font-size: 0.75rem;
-    }
-    
-    .user-avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 0.8rem;
-    }
-}
-/* Мобильное меню */
 .mobile-nav {
     position: fixed;
     top: 0;
@@ -467,6 +380,30 @@ a:hover { color: var(--accent-dark); }
     gap: 0.75rem;
 }
 
+.mobile-nav .theme-toggle-mobile {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.mobile-nav .theme-toggle-mobile i {
+    font-size: 1.2rem;
+    margin-right: 0.75rem;
+}
+
+.mobile-nav .theme-toggle-mobile span {
+    flex: 1;
+    text-align: left;
+}
+
 .overlay {
     position: fixed;
     top: 0;
@@ -480,7 +417,6 @@ a:hover { color: var(--accent-dark); }
 
 .overlay.active { display: block; }
 
-/* Основной контент */
 .main-content {
     flex: 1;
     padding: 2rem 0;
@@ -498,7 +434,6 @@ a:hover { color: var(--accent-dark); }
     margin-bottom: 2rem;
 }
 
-/* Кнопки */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -529,7 +464,6 @@ a:hover { color: var(--accent-dark); }
 .btn-success { background: var(--success-color); }
 .btn-warning { background: var(--warning-color); color: #333; }
 
-/* Формы */
 .form-container {
     max-width: 500px;
     margin: 0 auto;
@@ -601,7 +535,6 @@ a:hover { color: var(--accent-dark); }
     margin-bottom: 1.25rem;
 }
 
-/* Герой секция */
 .hero-section {
     text-align: center;
     padding: 3rem 1rem;
@@ -630,7 +563,6 @@ a:hover { color: var(--accent-dark); }
     flex-wrap: wrap;
 }
 
-/* Новости */
 .news-section { margin-bottom: 3rem; }
 
 .section-title {
@@ -755,7 +687,6 @@ a:hover { color: var(--accent-dark); }
     margin-bottom: 0.5rem;
 }
 
-/* Вертикальное меню */
 .page-with-sidebar {
     display: flex;
     gap: 2rem;
@@ -800,7 +731,6 @@ a:hover { color: var(--accent-dark); }
     color: white;
 }
 
-/* Заявки */
 .requests-list {
     display: flex;
     flex-direction: column;
@@ -959,7 +889,6 @@ a:hover { color: var(--accent-dark); }
 
 .empty-state i { font-size: 3rem; margin-bottom: 1rem; color: #ccc; }
 
-/* Админ-панель */
 .admin-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1279,7 +1208,6 @@ footer {
 .mt-3 { margin-top: 1rem; }
 .mb-3 { margin-bottom: 1rem; }
 
-/* Чат поддержки - СПРАВА */
 .support-chat {
     position: fixed;
     bottom: 20px;
@@ -1439,45 +1367,51 @@ footer {
     color: white;
 }
 
-/* ========== АДАПТИВ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
+/* ========== МОБИЛЬНАЯ ВЕРСИЯ ========== */
 @media (max-width: 768px) {
     .main-nav { display: none; }
     .mobile-menu-btn { display: block; }
     
     .header-content {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 0.5rem;
     }
     
     .logo {
-        order: 1;
+        flex-shrink: 1;
     }
     
-    .mobile-menu-btn {
-        order: 2;
+    .logo span {
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+    
+    .logo-img {
+        width: 32px;
+        height: 32px;
     }
     
     .theme-toggle {
-        order: 3;
-        width: 40px;
-        height: 40px;
-        min-width: 40px;
-        margin-left: auto;
+        display: none !important;
+    }
+    
+    .mobile-nav .theme-toggle-mobile {
+        display: flex;
     }
     
     .user-info {
-        order: 4;
-        max-width: 160px;
+        max-width: 140px;
     }
     
     .user-info #userName {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+        max-width: 80px;
     }
     
     .user-avatar {
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem;
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
     }
     
     .page-with-sidebar { flex-direction: column; }
@@ -1485,7 +1419,12 @@ footer {
     .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
     .sidebar-nav a { flex: 1; justify-content: center; }
     .sidebar-nav a:hover { transform: none; }
-    .admin-stats { grid-template-columns: repeat(2, 1fr); }
+    
+    .admin-stats { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .stat-card { padding: 0.5rem; }
+    .stat-number { font-size: 1.2rem; }
+    .stat-label { font-size: 0.7rem; }
+    
     .hero-title { font-size: 1.8rem; }
     .footer-content { grid-template-columns: 1fr; text-align: center; }
     .admin-tabs { flex-wrap: wrap; }
@@ -1510,42 +1449,29 @@ footer {
         max-width: 350px;
         height: 450px;
     }
+    
+    .news-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
     .logo span {
-        font-size: 1rem;
-    }
-    
-    .logo-img {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .user-info {
-        max-width: 140px;
-    }
-    
-    .user-info #userName {
-        font-size: 0.7rem;
-    }
-    
-    .user-avatar {
-        width: 32px;
-        height: 32px;
         font-size: 0.8rem;
     }
     
-    .theme-toggle {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
+    .logo-img {
+        width: 28px;
+        height: 28px;
     }
     
-    .chat-toggle {
-        width: 45px;
-        height: 45px;
-        font-size: 1.2rem;
+    .user-info #userName {
+        font-size: 0.65rem;
+        max-width: 70px;
+    }
+    
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
     }
 }
 

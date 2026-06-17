@@ -581,6 +581,7 @@ function updateNavigation() {
     let navHtml = '', mobileHtml = '';
     
     if (currentUser) {
+        // Только если пользователь авторизован — показываем кнопку "Выйти" и "Тема" в меню
         if (currentUser.role === 'admin') {
             navHtml = '<ul><li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li><li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li><li><a href="admin.html"><i class="fas fa-crown"></i> Админ-панель</a></li></ul>';
             mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="admin.html"><i class="fas fa-crown"></i> Админ-панель</a>';
@@ -594,22 +595,26 @@ function updateNavigation() {
             mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="#" onclick="alert(\'Доступ откроется после подтверждения\'); return false;"><i class="fas fa-clock"></i> Заявки (ожидание)</a>';
             if (footerRequestsLink) footerRequestsLink.href = '#';
         }
+        
+        // Добавляем кнопку "Тема" и "Выйти" только для авторизованных
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const themeIcon = currentTheme === 'dark' ? 'fa-sun' : 'fa-moon';
+        const themeText = currentTheme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+        
+        mobileHtml += '<div class="theme-toggle-mobile" id="mobileThemeToggle"><i class="fas ' + themeIcon + '"></i><span>' + themeText + '</span></div>';
+        mobileHtml += '<a href="#" id="mobileLogoutLink"><i class="fas fa-sign-out-alt"></i> Выйти</a>';
+        
     } else {
+        // Пользователь не авторизован — НЕТ кнопки "Выйти" и "Тема" в меню
         navHtml = '<ul><li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li><li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li><li><a href="login.html"><i class="fas fa-sign-in-alt"></i> Вход</a></li><li><a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a></li></ul>';
         mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="login.html"><i class="fas fa-sign-in-alt"></i> Вход</a><a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>';
         if (footerRequestsLink) footerRequestsLink.href = 'login.html';
     }
     
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const themeIcon = currentTheme === 'dark' ? 'fa-sun' : 'fa-moon';
-    const themeText = currentTheme === 'dark' ? 'Светлая тема' : 'Тёмная тема';
-    
-    mobileHtml += '<div class="theme-toggle-mobile" id="mobileThemeToggle"><i class="fas ' + themeIcon + '"></i><span>' + themeText + '</span></div>';
-    mobileHtml += '<a href="#" id="mobileLogoutLink"><i class="fas fa-sign-out-alt"></i> Выйти</a>';
-    
     desktopNav.innerHTML = navHtml;
     if (mobileNav) mobileNav.innerHTML = mobileHtml;
     
+    // Обработчик для мобильной кнопки темы (существует только если пользователь авторизован)
     const mobileThemeToggle = document.getElementById('mobileThemeToggle');
     if (mobileThemeToggle) {
         mobileThemeToggle.onclick = function(e) {
@@ -642,10 +647,17 @@ function updateNavigation() {
     }
     
     const mobileLogout = document.getElementById('mobileLogoutLink');
-    if (mobileLogout) mobileLogout.onclick = function(e) { e.preventDefault(); logout(); };
+    if (mobileLogout) {
+        mobileLogout.onclick = function(e) { e.preventDefault(); logout(); };
+    }
 }
 
-function logout() { localStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
+function logout() { 
+    localStorage.removeItem('currentUser'); 
+    currentUser = null;
+    window.location.href = 'index.html'; 
+}
+
 function getInitials(name) { if (!name) return '??'; var parts = name.split(' '); if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase(); return name.substring(0, 2).toUpperCase(); }
 
 function initMobileMenu() {

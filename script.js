@@ -581,7 +581,6 @@ function updateNavigation() {
     let navHtml = '', mobileHtml = '';
     
     if (currentUser) {
-        // Только если пользователь авторизован — показываем кнопку "Выйти" и "Тема" в меню
         if (currentUser.role === 'admin') {
             navHtml = '<ul><li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li><li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li><li><a href="admin.html"><i class="fas fa-crown"></i> Админ-панель</a></li></ul>';
             mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="admin.html"><i class="fas fa-crown"></i> Админ-панель</a>';
@@ -605,7 +604,6 @@ function updateNavigation() {
         mobileHtml += '<a href="#" id="mobileLogoutLink"><i class="fas fa-sign-out-alt"></i> Выйти</a>';
         
     } else {
-        // Пользователь не авторизован — НЕТ кнопки "Выйти" и "Тема" в меню
         navHtml = '<ul><li><a href="index.html"><i class="fas fa-home"></i> Главная</a></li><li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li><li><a href="login.html"><i class="fas fa-sign-in-alt"></i> Вход</a></li><li><a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a></li></ul>';
         mobileHtml = '<a href="index.html"><i class="fas fa-home"></i> Главная</a><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a><a href="login.html"><i class="fas fa-sign-in-alt"></i> Вход</a><a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>';
         if (footerRequestsLink) footerRequestsLink.href = 'login.html';
@@ -614,7 +612,7 @@ function updateNavigation() {
     desktopNav.innerHTML = navHtml;
     if (mobileNav) mobileNav.innerHTML = mobileHtml;
     
-    // Обработчик для мобильной кнопки темы (существует только если пользователь авторизован)
+    // Обработчик для мобильной кнопки темы
     const mobileThemeToggle = document.getElementById('mobileThemeToggle');
     if (mobileThemeToggle) {
         mobileThemeToggle.onclick = function(e) {
@@ -850,7 +848,7 @@ function renderRequests(requestsList) {
     document.querySelectorAll('.chat-request').forEach(function(btn) { btn.onclick = function() { openChatModal(parseInt(btn.dataset.id), btn.dataset.title); }; });
 }
 function deleteRequest(id) { if (confirm('Удалить?')) { requests = requests.filter(function(r) { return r.id !== id; }); saveRequests(); loadUserRequests(); showToast('Заявка удалена', 'success'); } }
-function getStatusText(status) { var s = { 'new': 'Новая', 'solved': 'Решена', 'rejected': 'Отклонена' }; return s[status] || status; }
+function getStatusText(status) { var s = { 'new': 'Новая', 'in_progress': 'В работе', 'solved': 'Решена', 'rejected': 'Отклонена' }; return s[status] || status; }
 
 // --- Создание заявки ---
 function initCreateRequest() {
@@ -981,10 +979,16 @@ function loadAllRequests() {
         
         var cellActions = document.createElement('td');
         var actionsHtml = '';
+        
         if (req.status === 'new') {
-            actionsHtml = '<button class="btn btn-success btn-sm solve-request" data-id="' + req.id + '">Решить</button> ';
+            actionsHtml += '<button class="btn btn-info btn-sm start-request" data-id="' + req.id + '">В работу</button> ';
+            actionsHtml += '<button class="btn btn-success btn-sm solve-request" data-id="' + req.id + '">Решить</button> ';
+            actionsHtml += '<button class="btn btn-danger btn-sm reject-request" data-id="' + req.id + '">Отклонить</button> ';
+        } else if (req.status === 'in_progress') {
+            actionsHtml += '<button class="btn btn-success btn-sm solve-request" data-id="' + req.id + '">Решить</button> ';
             actionsHtml += '<button class="btn btn-danger btn-sm reject-request" data-id="' + req.id + '">Отклонить</button> ';
         }
+        
         actionsHtml += '<button class="btn btn-info btn-sm chat-request" data-id="' + req.id + '" data-title="' + escapeHtml(req.title) + '">Чат</button>';
         cellActions.innerHTML = actionsHtml;
         row.appendChild(cellActions);
@@ -992,19 +996,24 @@ function loadAllRequests() {
         tableBody.appendChild(row);
     }
     
+    var startBtns = document.querySelectorAll('.start-request');
+    for (var j = 0; j < startBtns.length; j++) {
+        startBtns[j].onclick = function() { startRequest(parseInt(this.dataset.id)); };
+    }
+    
     var solveBtns = document.querySelectorAll('.solve-request');
-    for (var j = 0; j < solveBtns.length; j++) {
-        solveBtns[j].onclick = function() { solveRequest(parseInt(this.dataset.id)); };
+    for (var k = 0; k < solveBtns.length; k++) {
+        solveBtns[k].onclick = function() { solveRequest(parseInt(this.dataset.id)); };
     }
     
     var rejectBtns = document.querySelectorAll('.reject-request');
-    for (var k = 0; k < rejectBtns.length; k++) {
-        rejectBtns[k].onclick = function() { openRejectModal(parseInt(this.dataset.id)); };
+    for (var m = 0; m < rejectBtns.length; m++) {
+        rejectBtns[m].onclick = function() { openRejectModal(parseInt(this.dataset.id)); };
     }
     
     var chatBtns = document.querySelectorAll('.chat-request');
-    for (var m = 0; m < chatBtns.length; m++) {
-        chatBtns[m].onclick = function() { openChatModal(parseInt(this.dataset.id), this.dataset.title); };
+    for (var n = 0; n < chatBtns.length; n++) {
+        chatBtns[n].onclick = function() { openChatModal(parseInt(this.dataset.id), this.dataset.title); };
     }
 }
 
@@ -1064,17 +1073,48 @@ function loadUsersList() {
 function updateStats() {
     var totalEl = document.getElementById('totalRequests');
     var newEl = document.getElementById('newRequests');
+    var inProgressEl = document.getElementById('inProgressRequests');
     var solvedEl = document.getElementById('solvedRequests');
     var rejectedEl = document.getElementById('rejectedRequests');
+    
     if (totalEl) totalEl.textContent = requests.length;
     if (newEl) newEl.textContent = requests.filter(function(r) { return r.status === 'new'; }).length;
+    if (inProgressEl) inProgressEl.textContent = requests.filter(function(r) { return r.status === 'in_progress'; }).length;
     if (solvedEl) solvedEl.textContent = requests.filter(function(r) { return r.status === 'solved'; }).length;
     if (rejectedEl) rejectedEl.textContent = requests.filter(function(r) { return r.status === 'rejected'; }).length;
 }
 
 function confirmUser(userId) { if (confirm('Подтвердить?')) { var user = users.find(function(u) { return u.id === userId; }); if (user && user.role === 'user') { user.role = 'teacher'; saveUsers(); loadUsersList(); showToast('Пользователь ' + user.fullName + ' теперь учитель!', 'success'); } } }
 function revokeTeacher(userId) { if (confirm('Отозвать?')) { var user = users.find(function(u) { return u.id === userId; }); if (user && user.role === 'teacher') { user.role = 'user'; saveUsers(); loadUsersList(); showToast('Доступ отозван', 'success'); } } }
-function solveRequest(id) { if (confirm('Решить?')) { var req = requests.find(function(r) { return r.id === id; }); if (req && req.status === 'new') { req.status = 'solved'; req.updated_at = new Date().toISOString(); saveRequests(); loadAllRequests(); updateStats(); showToast('Заявка решена', 'success'); } } }
+
+function startRequest(id) {
+    if (confirm('Взять заявку в работу?')) {
+        var req = requests.find(function(r) { return r.id === id; });
+        if (req && req.status === 'new') {
+            req.status = 'in_progress';
+            req.updated_at = new Date().toISOString();
+            saveRequests();
+            loadAllRequests();
+            updateStats();
+            showToast('Заявка взята в работу', 'success');
+        }
+    }
+}
+
+function solveRequest(id) {
+    if (confirm('Решить?')) {
+        var req = requests.find(function(r) { return r.id === id; });
+        if (req && (req.status === 'new' || req.status === 'in_progress')) {
+            req.status = 'solved';
+            req.updated_at = new Date().toISOString();
+            saveRequests();
+            loadAllRequests();
+            updateStats();
+            showToast('Заявка решена', 'success');
+        }
+    }
+}
+
 function addCategory() { var input = document.getElementById('newCategoryName'); var name = input.value.trim(); if (!name) { alert('Введите название'); return; } var cats = JSON.parse(localStorage.getItem('categories')) || categories; if (cats.length > 0 && typeof cats[0] === 'object' && cats[0].name) cats = cats.map(function(c) { return c.name; }); if (cats.includes(name)) { alert('Такая категория уже есть'); return; } cats.push(name); localStorage.setItem('categories', JSON.stringify(cats)); loadCategoriesList(); input.value = ''; showToast('Категория добавлена', 'success'); }
 function deleteCategory(name) { if (confirm('Удалить "' + name + '"?')) { var cats = JSON.parse(localStorage.getItem('categories')) || categories; if (cats.length > 0 && typeof cats[0] === 'object' && cats[0].name) cats = cats.map(function(c) { return c.name; }); cats = cats.filter(function(c) { return c !== name; }); localStorage.setItem('categories', JSON.stringify(cats)); loadCategoriesList(); showToast('Категория удалена', 'success'); } }
 function addTemplate() { var title = document.getElementById('newTemplateTitle')?.value.trim(); var desc = document.getElementById('newTemplateDesc')?.value.trim(); var category = document.getElementById('newTemplateCategory')?.value; if (!title || !desc || !category) { alert('Заполните все поля'); return; } var temps = JSON.parse(localStorage.getItem('templates')) || templates; temps.push({ id: Date.now(), title: title, description: desc, category: category }); localStorage.setItem('templates', JSON.stringify(temps)); loadTemplatesList(); document.getElementById('newTemplateTitle').value = ''; document.getElementById('newTemplateDesc').value = ''; showToast('Шаблон добавлен', 'success'); }
@@ -1082,5 +1122,5 @@ function deleteTemplate(id) { if (confirm('Удалить шаблон?')) { var
 var currentRejectId = null;
 function openRejectModal(id) { currentRejectId = id; var modal = document.getElementById('rejectModal'); if (modal) modal.classList.add('active'); }
 function closeRejectModal() { var modal = document.getElementById('rejectModal'); if (modal) modal.classList.remove('active'); document.getElementById('rejectReason').value = ''; }
-function confirmReject() { var reason = document.getElementById('rejectReason').value.trim(); if (!reason) { alert('Укажите причину'); return; } var req = requests.find(function(r) { return r.id === currentRejectId; }); if (req && req.status === 'new') { req.status = 'rejected'; req.rejectReason = reason; req.updated_at = new Date().toISOString(); saveRequests(); loadAllRequests(); updateStats(); closeRejectModal(); showToast('Заявка отклонена', 'warning'); } }
+function confirmReject() { var reason = document.getElementById('rejectReason').value.trim(); if (!reason) { alert('Укажите причину'); return; } var req = requests.find(function(r) { return r.id === currentRejectId; }); if (req && (req.status === 'new' || req.status === 'in_progress')) { req.status = 'rejected'; req.rejectReason = reason; req.updated_at = new Date().toISOString(); saveRequests(); loadAllRequests(); updateStats(); closeRejectModal(); showToast('Заявка отклонена', 'warning'); } }
 function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
